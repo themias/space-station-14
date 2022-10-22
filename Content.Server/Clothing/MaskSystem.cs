@@ -17,6 +17,7 @@ using Content.Server.VoiceMask;
 using Content.Shared.Clothing.EntitySystems;
 using Content.Shared.IdentityManagement.Components;
 using Robust.Shared.Player;
+using Content.Server.PepperSpray;
 
 namespace Content.Server.Clothing
 {
@@ -109,6 +110,10 @@ namespace Content.Server.Clothing
             // toggle breath tool connection (skip during equip since that is handled in LungSystem)
             if (isEquip || !TryComp<BreathToolComponent>(uid, out var breathTool))
                 return;
+
+            //toggle pepper spray protection
+            if (TryComp<PepperProtectionComponent>(uid, out var pepperProtection))
+                pepperProtection.Enabled = !mask.IsToggled;
 
             if (mask.IsToggled)
             {

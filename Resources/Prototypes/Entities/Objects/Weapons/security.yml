@@ -113,3 +113,24 @@
       softness: 0
       enabled: true
 
+- type: entity
+  name: pepper spray
+  parent: SprayBottle
+  id: PepperSpray
+  suffix: Filled
+  description: A hand-held canister of capsaicin oil for non-lethally subduing perps.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Melee/pepperspray.rsi
+    state: pepperspray
+  - type: Item
+    sprite: Objects/Weapons/Melee/pepperspray.rsi
+  - type: SolutionContainerManager
+    solutions:
+      spray:
+        maxVol: 100
+        reagents:
+        - ReagentId: CapsaicinOil
+          Quantity: 100
+  - type: StaticPrice
+    price: 40

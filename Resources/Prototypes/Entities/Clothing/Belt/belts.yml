@@ -343,6 +343,7 @@
         - FlashOnTrigger
         - Flash
         - Handcuff
+        - PepperSpray
   - type: ItemMapper
     mapLayers:
       flashbang:

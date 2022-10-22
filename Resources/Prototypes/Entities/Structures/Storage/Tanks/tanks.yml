@@ -118,3 +118,29 @@
           reagents:
             - ReagentId: Kvass
               Quantity: 1500
+
+# Pepper Spray
+- type: entity
+  parent: PepperSprayTank
+  id: PepperSprayTank
+  suffix: Empty
+  components:
+    - type: Sprite
+      sprite: Structures/Storage/pepperspray.rsi
+      state: kvass
+    - type: WallMount
+      arc: 180
+    - type: Transform
+      noRot: false
+
+- type: entity
+  parent: PepperSprayTank
+  id: PepperSprayTankFull
+  suffix: Full
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        tank:
+          reagents:
+            - ReagentId: CapsaicinOil
+              Quantity: 1000

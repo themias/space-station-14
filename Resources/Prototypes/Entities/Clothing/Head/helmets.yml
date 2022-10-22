@@ -18,6 +18,7 @@
         Slash: 0.8
         Piercing: 0.8
   - type: IdentityBlocker
+  - type: PepperProtection
 
 - type: entity
   parent: ClothingHeadEVAHelmetBase
@@ -108,6 +109,7 @@
         Blunt: 0.8
         Slash: 0.8
         Piercing: 0.8
+  - type: PepperProtection
 
 - type: entity
   parent: ClothingHeadBase
@@ -129,6 +131,7 @@
   - type: Tag
     tags:
     - HidesHair
+  - type: PepperProtection
 
 - type: entity
   parent: ClothingHeadBase
@@ -222,6 +225,7 @@
     tags:
     - HidesHair
     - WhitelistChameleon
+  - type: PepperProtection
 
 - type: entity
   parent: ClothingHeadLightBase
@@ -253,6 +257,7 @@
     tags:
     - HidesHair
     - WhitelistChameleon
+  - type: PepperProtection
 
 - type: entity
   parent: ClothingHeadBase

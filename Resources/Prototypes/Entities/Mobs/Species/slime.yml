@@ -42,6 +42,10 @@
       methods: [ Touch ]
       effects:
       - !type:WashCreamPieReaction
+    - reagents: [CapsaicinOil]
+      methods: [Touch]
+      effects:
+      - !type:PepperSprayReaction
     - reagents: [ Water ]
       methods: [ Touch ]
       effects:

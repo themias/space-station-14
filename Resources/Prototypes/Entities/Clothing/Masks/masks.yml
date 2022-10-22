@@ -13,6 +13,7 @@
   - type: DiseaseProtection
     protection: 0.05
   - type: IdentityBlocker
+  - type: PepperProtection
 
 - type: entity
   parent: ClothingMaskGas
@@ -125,6 +126,8 @@
   - type: IngestionBlocker
   - type: DiseaseProtection
     protection: 0.10
+  - type: PepperProtection
+    protectsEyes: false
 
 - type: entity
   parent: ClothingMaskPullableBase
@@ -140,6 +143,8 @@
   - type: IngestionBlocker
   - type: DiseaseProtection
     protection: 0.05
+  - type: PepperProtection
+    protectsEyes: false
 
 - type: entity
   parent: ClothingMaskBase
@@ -226,3 +231,4 @@
   - type: DiseaseProtection
     protection: 0.1
   - type: IdentityBlocker
+  - type: PepperProtection

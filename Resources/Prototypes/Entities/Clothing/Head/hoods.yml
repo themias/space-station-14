@@ -14,6 +14,7 @@
   - type: Tag
     tags:
     - HidesHair
+  - type: PepperProtection
 
 - type: entity
   parent: ClothingHeadHatHoodBioGeneral
@@ -128,3 +129,4 @@
       coefficients:
         Heat: 0.95
         Radiation: 0.65
+  - type: PepperProtection

@@ -74,6 +74,8 @@
   - type: Clothing
     sprite: Clothing/Eyes/Glasses/meson.rsi
   - type: EyeProtection
+  - type: PepperProtection
+    protectsMouth: false
 
 - type: entity
   parent: ClothingEyesBase
@@ -130,3 +132,6 @@
     modifiers:
       coefficients:
         Heat: 0.95
+  - type: PepperProtection
+    protectsMouth: false
+

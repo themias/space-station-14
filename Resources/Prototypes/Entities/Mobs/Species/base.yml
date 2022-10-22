@@ -30,6 +30,10 @@
       methods: [Touch]
       effects:
       - !type:WashCreamPieReaction
+    - reagents: [CapsaicinOil]
+      methods: [Touch]
+      effects:
+      - !type:PepperSprayReaction
   - type: Flashable
   - type: Polymorphable
   - type: Identity

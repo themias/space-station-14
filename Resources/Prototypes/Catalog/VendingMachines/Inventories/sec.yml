@@ -2,6 +2,7 @@
   id: SecTechInventory
   startingInventory:
     Handcuffs: 8
+    PepperSpray: 4
     GrenadeFlashBang: 4
     Flash: 5
     FlashlightLantern: 4 #seclite

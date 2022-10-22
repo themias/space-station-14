@@ -30,7 +30,8 @@
         amount: 1
       - id: Flash
         amount: 3
-#      - Pepperspray
+      - id: PepperSpray
+        amount: 3
 #      - GrenadeTeargas
 
 - type: entity
