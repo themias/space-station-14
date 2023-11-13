@@ -254,8 +254,22 @@ namespace Content.Server.GameTicking
 
                     //todo: what if they dont breathe lol
                     //cry deeply
-                    DamageSpecifier damage = new(_prototypeManager.Index<DamageTypePrototype>("Asphyxiation"), 200);
-                    _damageable.TryChangeDamage(playerEntity, damage, true);
+                    if (TryComp<DamageableComponent>(playerEntity, out var damagable) && damagable.DamageContainerID != null &&
+                        _prototypeManager.TryIndex<DamageContainerPrototype>(damagable.DamageContainerID, out var damageContainerPrototype))
+                    {
+                        if (damageContainerPrototype.SupportedGroups.Contains("Airloss") || damageContainerPrototype.SupportedTypes.Contains("Asphyxiation"))
+                        {
+                            // Biological
+                            DamageSpecifier damage = new(_prototypeManager.Index<DamageTypePrototype>("Asphyxiation"), 200);
+                            _damageable.TryChangeDamage(playerEntity, damage, true);
+                        }
+                        else
+                        {
+                            // Inorganic
+                            DamageSpecifier damage = new(_prototypeManager.Index<DamageTypePrototype>("Shock"), 200);
+                            _damageable.TryChangeDamage(playerEntity, damage, true);
+                        }
+                    }
                 }
             }
 

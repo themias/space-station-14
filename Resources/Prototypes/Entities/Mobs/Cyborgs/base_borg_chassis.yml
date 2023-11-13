@@ -192,6 +192,10 @@
     tags:
     - ShoesRequiredStepTriggerImmune
     - DoorBumpOpener
+  - type: MobStateActions
+    actions:
+      Critical:
+      - ActionCritSuccumb
 
 - type: entity
   id: BaseBorgChassisNT
