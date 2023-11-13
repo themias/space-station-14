@@ -27,7 +27,7 @@ public sealed partial class DoorTimingWireAction : ComponentWireAction<AirlockCo
         }
     }
 
-    public override object StatusKey { get; } = AirlockWireStatus.TimingIndicator;
+    public override object StatusKey { get; } = AirlockWireStatus.AlarmIndicator;
 
     public override bool Cut(EntityUid user, Wire wire, AirlockComponent door)
     {

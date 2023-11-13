@@ -118,7 +118,7 @@ namespace Content.Server.Doors.Systems
 
         public bool EmergencyPressureStop(EntityUid uid, FirelockComponent? firelock = null, DoorComponent? door = null)
         {
-            if (!Resolve(uid, ref firelock, ref door))
+            if (!Resolve(uid, ref firelock, ref door) || !firelock.PressureEnabled)
                 return false;
 
             if (door.State == DoorState.Open)
@@ -187,7 +187,7 @@ namespace Content.Server.Doors.Systems
 
         private void OnAtmosAlarm(EntityUid uid, FirelockComponent component, AtmosAlarmEvent args)
         {
-            if (!this.IsPowered(uid, EntityManager))
+            if (!this.IsPowered(uid, EntityManager) || !component.AlarmEnabled)
                 return;
 
             if (!TryComp<DoorComponent>(uid, out var doorComponent))
@@ -324,7 +324,7 @@ namespace Content.Server.Doors.Systems
             holdingPressure |= maxPressure - minPressure > firelock.PressureThreshold;
             holdingFire |= maxTemperature - minTemperature > firelock.TemperatureThreshold;
 
-            return (holdingPressure, holdingFire);
+            return (holdingPressure && firelock.PressureEnabled, holdingFire && firelock.HeatEnabled);
         }
 
         private bool HasAirtightBlocker(IEnumerable<EntityUid> enumerable, AtmosDirection dir, EntityQuery<AirtightComponent> airtightQuery)

@@ -39,5 +39,23 @@ namespace Content.Shared.Doors.Components
         /// </summary>
         [DataField("alarmAutoClose"), ViewVariables(VVAccess.ReadWrite)]
         public bool AlarmAutoClose = true;
+
+        /// <summary>
+        /// Whether this firelock responds to fire alarm signals
+        /// </summary>
+        [DataField("alarmEnabled"), ViewVariables(VVAccess.ReadWrite)]
+        public bool AlarmEnabled = true;
+
+        /// <summary>
+        /// Whether this firelock closes if it detects heat
+        /// </summary>
+        [DataField("heatEnabled"), ViewVariables(VVAccess.ReadWrite)]
+        public bool HeatEnabled = true;
+
+        /// <summary>
+        /// Whether this firelock closes if it detects pressure differential
+        /// </summary>
+        [DataField("pressureEnabled"), ViewVariables(VVAccess.ReadWrite)]
+        public bool PressureEnabled = true;
     }
 }

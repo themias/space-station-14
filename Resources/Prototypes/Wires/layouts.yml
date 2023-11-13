@@ -118,3 +118,15 @@
     - !type:DelayWireAction
     - !type:ProceedWireAction
     - !type:BoomWireAction
+
+- type: wireLayout
+  id: Firelock
+  dummyWires: 0
+  wires:
+  - !type:PowerWireAction
+    pulseTimeout: 15
+  - !type:DoorBoltWireAction
+  - !type:DoorBoltLightWireAction
+  - !type:DoorAlarmWireAction
+  - !type:DoorHeatWireAction
+  - !type:DoorPressureWireAction
