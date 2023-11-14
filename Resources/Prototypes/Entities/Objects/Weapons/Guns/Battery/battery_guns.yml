@@ -522,3 +522,31 @@
   - type: Appearance
   - type: StaticPrice
     price: 750
+    
+- type: entity
+  name: laser musket
+  parent: BaseWeaponBattery
+  id: WeaponLaserMusket
+  description: Slow but reliable. Requires two cranks for each shot.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Battery/laser_musket.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-unshaded-4
+      map: ["enum.GunVisualLayers.MagUnshaded"]
+      shader: unshaded
+  - type: Clothing
+    sprite: Objects/Weapons/Guns/Battery/laser_musket.rsi
+  - type: HitscanBatteryAmmoProvider
+    proto: RedLaser
+    fireCost: 100
+    - type: BatteryHandCrank
+    chargePerCrank: 50
+    sound: /Audio/Weapons/Guns/Misc/laser_crank.ogg
+  - type: UseDelay
+    delay: 2
+  - type: Battery
+    maxCharge: 100
+    startingCharge: 100

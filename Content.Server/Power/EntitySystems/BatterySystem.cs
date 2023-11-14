@@ -2,7 +2,9 @@ using Content.Server.Cargo.Systems;
 using Content.Server.Emp;
 using Content.Server.Power.Components;
 using Content.Shared.Examine;
+using Content.Shared.Interaction.Events;
 using Content.Shared.Rejuvenate;
+using Content.Shared.Timing;
 using JetBrains.Annotations;
 using Robust.Shared.Utility;
 
@@ -11,6 +13,9 @@ namespace Content.Server.Power.EntitySystems
     [UsedImplicitly]
     public sealed class BatterySystem : EntitySystem
     {
+        [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
+        [Dependency] private readonly UseDelaySystem _useDelaySystem = default!;
+
         public override void Initialize()
         {
             base.Initialize();
@@ -20,6 +25,7 @@ namespace Content.Server.Power.EntitySystems
             SubscribeLocalEvent<BatteryComponent, RejuvenateEvent>(OnBatteryRejuvenate);
             SubscribeLocalEvent<BatteryComponent, PriceCalculationEvent>(CalculateBatteryPrice);
             SubscribeLocalEvent<BatteryComponent, EmpPulseEvent>(OnEmpPulse);
+            SubscribeLocalEvent<BatteryHandCrankComponent, UseInHandEvent>(OnCrank);
 
             SubscribeLocalEvent<NetworkBatteryPreSync>(PreSync);
             SubscribeLocalEvent<NetworkBatteryPostSync>(PostSync);
@@ -166,6 +172,19 @@ namespace Content.Server.Power.EntitySystems
                 return false;
 
             return battery.CurrentCharge / battery.MaxCharge >= 0.99f;
+        }
+
+        private void OnCrank(EntityUid uid, BatteryHandCrankComponent component, UseInHandEvent args)
+        {
+            if (!TryComp<BatteryComponent>(uid, out var batteryComp))
+                return;
+
+            if (TryComp(uid, out UseDelayComponent? useDelay) && useDelay.ActiveDelay)
+                return;
+
+            _useDelaySystem.BeginDelay(uid, useDelay);
+            _audioSystem.PlayPvs(component.Sound, uid);
+            SetCharge(uid, batteryComp.CurrentCharge + component.ChargePerCrank, batteryComp);
         }
     }
 }

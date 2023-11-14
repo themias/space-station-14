@@ -7,3 +7,8 @@
   license: "CC-BY-NC-SA-3.0"
   copyright: "Taken from tgstation"
   source: "https://github.com/tgstation/TerraGov-Marine-Corps/blob/0d97ec86c49e2a89409bd3ddf0b7451b3f1c9a0e/sound/weapons/guns/interact/selector.ogg"
+  
+- files: ["laser_crank.ogg"]
+  license: "CC-BY-NC-SA-3.0"
+  copyright: "Taken from tgstation"
+  source: "https://github.com/tgstation/tgstation/blob/1496019dde98d7916ac9d63ad3bbf823323c9e0e/sound/weapons/laser_crank.ogg"
