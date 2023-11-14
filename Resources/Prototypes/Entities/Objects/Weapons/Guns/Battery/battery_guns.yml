@@ -542,7 +542,7 @@
   - type: HitscanBatteryAmmoProvider
     proto: RedLaser
     fireCost: 100
-    - type: BatteryHandCrank
+  - type: BatteryHandCrank
     chargePerCrank: 50
     sound: /Audio/Weapons/Guns/Misc/laser_crank.ogg
   - type: UseDelay
