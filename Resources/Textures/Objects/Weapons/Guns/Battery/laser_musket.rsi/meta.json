@@ -8,9 +8,6 @@
     },
     "states": [
 	{
-		"name": "icon"
-	},
-	{
 		"name": "base"
 	},
 	{
@@ -36,6 +33,10 @@
 	},
 	{
 		"name": "inhand-left",
+		"directions": 4
+	},
+	{
+	"name": "inhand-left-mag-0",
 		"directions": 4,
 		"delays": [
             [
@@ -57,7 +58,7 @@
         ]
 	},
 	{
-		"name": "inhand-right",
+	"name": "inhand-left-mag-1",
 		"directions": 4,
 		"delays": [
             [
@@ -77,6 +78,150 @@
                 0.3
             ]
         ]
+	},
+	{
+	"name": "inhand-left-mag-2",
+		"directions": 4,
+		"delays": [
+            [
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ]
+        ]
+	},
+	{
+	"name": "inhand-left-mag-3",
+		"directions": 4,
+		"delays": [
+            [
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ]
+        ]
+	},
+	{
+	"name": "inhand-left-mag-4",
+		"directions": 4
+	},
+	{
+		"name": "inhand-right",
+		"directions": 4
+	},
+	{
+		"name": "inhand-right-mag-0",
+		"directions": 4,
+		"delays": [
+            [
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ]
+        ]
+	},
+	{
+		"name": "inhand-right-mag-1",
+		"directions": 4,
+		"delays": [
+            [
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ]
+        ]
+	},
+	{
+		"name": "inhand-right-mag-2",
+		"directions": 4,
+		"delays": [
+            [
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ]
+        ]
+	},
+	{
+		"name": "inhand-right-mag-3",
+		"directions": 4,
+		"delays": [
+            [
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ],
+			[
+                0.3,
+                0.3
+            ]
+        ]
+	},
+	{
+		"name": "inhand-right-mag-4",
+		"directions": 4
 	},
     {
       "name": "equipped-BACKPACK",

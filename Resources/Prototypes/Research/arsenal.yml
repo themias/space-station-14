@@ -116,6 +116,7 @@
   cost: 10000
   recipeUnlocks:
   - WeaponLaserCannon
+  - WeaponLaserMusket
 
 - type: technology
   id: WaveParticleHarnessing

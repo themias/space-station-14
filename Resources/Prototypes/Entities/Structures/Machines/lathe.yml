@@ -278,6 +278,7 @@
       - WeaponLaserCarbine
       - WeaponAdvancedLaser
       - WeaponLaserCannon
+      - WeaponLaserMusket
       - WeaponXrayCannon
       - WeaponTaser
 
@@ -586,6 +587,7 @@
       - WeaponLaserCannon
       - WeaponLaserCarbine
       - WeaponLaserCarbinePractice
+      - WeaponLaserMusket
       - WeaponTaser
       - WeaponXrayCannon
   - type: MaterialStorage
