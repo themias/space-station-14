@@ -6,6 +6,7 @@ using Content.Shared.Interaction.Events;
 using Content.Shared.Rejuvenate;
 using Content.Shared.Timing;
 using JetBrains.Annotations;
+using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
 namespace Content.Server.Power.EntitySystems
@@ -15,6 +16,7 @@ namespace Content.Server.Power.EntitySystems
     {
         [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
         [Dependency] private readonly UseDelaySystem _useDelaySystem = default!;
+        [Dependency] private readonly IGameTiming _gameTiming = default!;
 
         public override void Initialize()
         {
@@ -182,9 +184,12 @@ namespace Content.Server.Power.EntitySystems
             if (TryComp(uid, out UseDelayComponent? useDelay) && useDelay.ActiveDelay)
                 return;
 
-            _useDelaySystem.BeginDelay(uid, useDelay);
-            _audioSystem.PlayPvs(component.Sound, uid);
-            SetCharge(uid, batteryComp.CurrentCharge + component.ChargePerCrank, batteryComp);
+            if (_gameTiming.IsFirstTimePredicted)
+            {
+                _useDelaySystem.BeginDelay(uid, useDelay);
+                _audioSystem.PlayPvs(component.Sound, uid);
+                SetCharge(uid, batteryComp.CurrentCharge + component.ChargePerCrank, batteryComp);
+            }
         }
     }
 }
