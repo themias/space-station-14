@@ -3,7 +3,9 @@ using Content.Shared.Database;
 using Content.Shared.Follower.Components;
 using Content.Shared.Ghost;
 using Content.Shared.Hands;
+using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Events;
+using Content.Shared.Movement.Systems;
 using Content.Shared.Physics.Pull;
 using Content.Shared.Tag;
 using Content.Shared.Verbs;
@@ -25,6 +27,7 @@ public sealed class FollowerSystem : EntitySystem
     [Dependency] private readonly SharedJointSystem _jointSystem = default!;
     [Dependency] private readonly SharedPhysicsSystem _physicsSystem = default!;
     [Dependency] private readonly INetManager _netMan = default!;
+    [Dependency] private readonly SharedMoverController _mover = default!;
 
     public override void Initialize()
     {
@@ -96,7 +99,8 @@ public sealed class FollowerSystem : EntitySystem
 
     private void OnFollowerMove(EntityUid uid, FollowerComponent component, ref MoveInputEvent args)
     {
-        StopFollowingEntity(uid, component.Following);
+        if(!HasComp<GhostControllableComponent>(component.Following))
+            StopFollowingEntity(uid, component.Following);
     }
 
     private void OnPullStarted(EntityUid uid, FollowerComponent component, PullStartedMessage args)
@@ -175,6 +179,9 @@ public sealed class FollowerSystem : EntitySystem
 
         EnsureComp<OrbitVisualsComponent>(follower);
 
+        if (HasComp<GhostControllableComponent>(entity))
+            _mover.SetRelay(follower, entity);
+
         var followerEv = new StartedFollowingEntityEvent(entity, follower);
         var entityEv = new EntityStartedFollowingEvent(entity, follower);
 
@@ -204,6 +211,8 @@ public sealed class FollowerSystem : EntitySystem
             RemComp<FollowerComponent>(uid);
             RemComp<OrbitVisualsComponent>(uid);
         }
+
+        RemComp<RelayInputMoverComponent>(uid);
 
         var uidEv = new StoppedFollowingEntityEvent(target, uid);
         var targetEv = new EntityStoppedFollowingEvent(target, uid);
