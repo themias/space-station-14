@@ -45,6 +45,7 @@ public sealed partial class ClimbSystem : VirtualController
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
     [Dependency] private readonly SharedStunSystem _stunSystem = default!;
     [Dependency] private readonly SharedTransformSystem _xformSystem = default!;
+    [Dependency] private readonly BonkSystem _bonkSystem = default!;
 
     private const string ClimbingFixtureName = "climb";
     private const int ClimbingCollisionGroup = (int) (CollisionGroup.TableLayer | CollisionGroup.LowImpassable);
@@ -234,7 +235,16 @@ public sealed partial class ClimbSystem : VirtualController
          if (args.Handled || args.Cancelled || args.Args.Target == null || args.Args.Used == null)
              return;
 
-         Climb(uid, args.Args.User, args.Args.Target.Value, climbing: component);
+        //var bonkEv = new BonkAttemptEvent(args.Args.Target.Value, args.Args.User);
+        //RaiseLocalEvent(args.Args.Target.Value, bonkEv);
+        //if (bonkEv.Handled)
+        //    return;
+
+        args.Handled = _bonkSystem.TryBonk(args.Args.User, args.Args.Target.Value);
+        if (args.Handled)
+            return;
+
+        Climb(uid, args.Args.User, args.Args.Target.Value, climbing: component);
          args.Handled = true;
      }
 

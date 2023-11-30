@@ -1,18 +1,13 @@
 using Content.Shared.CCVar;
 using Content.Shared.Climbing.Components;
 using Content.Shared.Damage;
-using Content.Shared.DoAfter;
-using Content.Shared.DragDrop;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
-using Content.Shared.Interaction.Components;
 using Content.Shared.Popups;
 using Content.Shared.Stunnable;
-using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Player;
-using Robust.Shared.Serialization;
 
 namespace Content.Shared.Climbing.Systems;
 
@@ -24,27 +19,13 @@ public sealed partial class BonkSystem : EntitySystem
     [Dependency] private readonly SharedStunSystem _stunSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
 
     public override void Initialize()
     {
         base.Initialize();
-        SubscribeLocalEvent<BonkableComponent, DragDropTargetEvent>(OnDragDrop);
-        SubscribeLocalEvent<BonkableComponent, BonkDoAfterEvent>(OnBonkDoAfter);
     }
 
-    private void OnBonkDoAfter(EntityUid uid, Components.BonkableComponent component, BonkDoAfterEvent args)
-    {
-        if (args.Handled || args.Cancelled || args.Args.Target == null)
-            return;
-
-        TryBonk(args.Args.User, uid, component);
-
-        args.Handled = true;
-    }
-
-
-    public bool TryBonk(EntityUid user, EntityUid bonkableUid, Components.BonkableComponent? bonkableComponent = null)
+    public bool TryBonk(EntityUid user, EntityUid bonkableUid, BonkableComponent? bonkableComponent = null)
     {
         if (!Resolve(bonkableUid, ref bonkableComponent, false))
             return false;
@@ -71,28 +52,5 @@ public sealed partial class BonkSystem : EntitySystem
             _damageableSystem.TryChangeDamage(user, bonkDmg, true, origin: user);
 
         return true;
-
-    }
-
-    private void OnDragDrop(EntityUid uid, Components.BonkableComponent component, ref DragDropTargetEvent args)
-    {
-        if (args.Handled || !HasComp<ClumsyComponent>(args.Dragged))
-            return;
-
-        var doAfterArgs = new DoAfterArgs(EntityManager, args.Dragged, component.BonkDelay, new BonkDoAfterEvent(), uid, target: uid)
-        {
-            BreakOnTargetMove = true,
-            BreakOnUserMove = true,
-            BreakOnDamage = true
-        };
-
-        _doAfter.TryStartDoAfter(doAfterArgs);
-
-        args.Handled = true;
-    }
-
-    [Serializable, NetSerializable]
-    private sealed partial class BonkDoAfterEvent : SimpleDoAfterEvent
-    {
     }
 }
