@@ -1,0 +1,64 @@
+- type: entity
+  parent: BaseMachinePowered
+  id: cryotron
+  name: industrial cryogenic sleep unit
+  description: A special machine for crew members to spend periods in suspended animation.
+  components:
+  - type: Cryotron
+  - type: Sprite
+    sprite: Structures/cryotron.rsi
+    drawdepth: Mobs
+    noRot: true
+    layers:
+      - state: cryotron_down
+        map: [ "enum.CryotronVisualLayers.Down" ]
+      - state: cryotron_up
+        map: [ "enum.CryotronVisualLayers.Up" ]
+      - state: cryotron_go_down
+        map: [ "enum.CryotronVisualLayers.GoDown" ]
+      - state: cryotron_go_up
+        map: [ "enum.CryotronVisualLayers.GoUp" ]
+  - type: InteractionOutline
+  - type: Transform
+    noRot: true
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5,-0.5,0.5,0.90"
+        density: 200
+        mask:
+          - MachineMask
+        layer:
+          - MachineLayer
+  - type: ContainerContainer
+    containers:
+      cryotron-body:
+        !type:ContainerSlot
+        showEnts: true
+  - type: Appearance
+  - type: Damageable
+    damageContainer: Inorganic
+    damageModifierSet: Metallic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+        - !type:EmptyAllContainersBehaviour
+        - !type:ChangeConstructionNodeBehavior
+          node: machineFrame
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+  - type: ApcPowerReceiver
+    powerLoad: 3000
+  # - type: UserInterface
+    # interfaces:
+      # - key: enum.HealthAnalyzerUiKey.Key
+        # type: HealthAnalyzerBoundUserInterface
+  # - type: ActivatableUIRequiresPower        
+  # - type: GuideHelp
+    # guides:
+    # - Cryogenics
