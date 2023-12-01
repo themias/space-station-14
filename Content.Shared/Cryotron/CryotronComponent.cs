@@ -23,6 +23,13 @@ public sealed partial class CryotronComponent : Component
 
 
     /// <summary>
+    /// Delay until the buttons become clickable. (except cancel)
+    /// Makes sure people read it, as well as make it less viable for escape during chase
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite), DataField("enterDelay")]
+    public TimeSpan EnterDelay = TimeSpan.FromSeconds(5);
+
+    /// <summary>
     /// Sound that plays when the cryotron opens
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField("openSound")]

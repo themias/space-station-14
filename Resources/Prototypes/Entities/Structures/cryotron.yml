@@ -4,7 +4,6 @@
   name: industrial cryogenic sleep unit
   description: A special machine for crew members to spend periods in suspended animation.
   components:
-  - type: Cryotron
   - type: Sprite
     sprite: Structures/cryotron.rsi
     drawdepth: Mobs
@@ -25,7 +24,7 @@
       fix1:
         shape:
           !type:PhysShapeAabb
-          bounds: "-1.5,-0.5,1.5,0.6"
+          bounds: "-1.4,-0.5,1.4,0.6"
         density: 200
         mask:
           - MachineMask
@@ -37,6 +36,7 @@
         !type:ContainerSlot
         showEnts: true
   - type: Appearance
+  - type: Cryotron
   - type: Climbable
   - type: Damageable
     damageContainer: Inorganic
@@ -57,11 +57,13 @@
   - type: EmptyOnMachineDeconstruct
     containers:
     - cryotron-bodyContainer
-  # - type: UserInterface
-    # interfaces:
-      # - key: enum.HealthAnalyzerUiKey.Key
-        # type: HealthAnalyzerBoundUserInterface
-  # - type: ActivatableUIRequiresPower        
+  - type: ActivatableUI
+    key: enum.CryotronUiKey.Key
+  - type: ActivatableUIRequiresPower     
+  - type: UserInterface
+    interfaces:
+      - key: enum.CryotronUiKey.Key
+        type: CryotronBoundUserInterface   
   # - type: GuideHelp
     # guides:
     # - Cryogenics

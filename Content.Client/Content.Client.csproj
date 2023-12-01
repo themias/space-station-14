@@ -28,4 +28,15 @@
   </ItemGroup>
   <Import Project="..\RobustToolbox\MSBuild\Robust.Properties.targets" />
   <Import Project="..\RobustToolbox\MSBuild\XamlIL.targets" />
+  <ItemGroup>
+    <AdditionalFiles Remove="Cryotron\CryotronWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Cryotron\CryotronWindow.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Cryotron\UI\CryotronWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
 </Project>

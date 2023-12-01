@@ -1,0 +1,30 @@
+<controls:FancyWindow xmlns="https://spacestation14.io"
+                xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+                Title="{Loc 'cryotron-title'}"
+                Resizable="False">
+  <BoxContainer Margin="0 0"
+                Orientation="Horizontal"
+                HorizontalExpand="True"
+                VerticalExpand="True">
+    <BoxContainer Margin="10 0 10 0" Orientation="Horizontal">
+      <Label Text="{Loc 'cryotron-permanent-title'}" StyleClasses="StatusFieldTitle" />
+      <Label Text="{Loc 'cryotron-permanent-desc'}" />
+      <Button Name="PermanentSleepButton"
+          Text="{Loc 'cryotron-permanent-button'}"
+          Disabled="True"></Button>
+    </BoxContainer>
+    <BoxContainer Margin="10 0 10 0" Orientation="Horizontal">
+        <Label Text="{Loc 'cryotron-temporary-title'}" StyleClasses="StatusFieldTitle" />
+      <Label Text="{Loc 'cryotron-temporary-desc'}" />
+      <Button Name="TemporarySleepButton"
+          Text="{Loc 'cryotron-temporary-button'}"
+          Disabled="True"></Button>
+    </BoxContainer>
+    <BoxContainer Margin="10 0 10 0" Orientation="Horizontal">
+        <Label Text="{Loc 'cryotron-cancel-title'}" StyleClasses="StatusFieldTitle" />
+      <Label Text="{Loc 'cryotron-cancel-desc'}" />
+      <Button Name="CancelButton"
+          Text="{Loc 'cryotron-cancel-button'}"></Button>
+    </BoxContainer>
+  </BoxContainer>
+</controls:FancyWindow>

@@ -5,6 +5,7 @@ using Robust.Client.Animations;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Shared.Audio.Systems;
+using static Robust.Client.GameObjects.SpriteComponent;
 
 namespace Content.Client.Cryotron;
 
@@ -39,6 +40,11 @@ public sealed class CryotronSystem : SharedCryotronSystem
         {
             return;
         }
+
+        sprite.LayerSetVisible(CryotronVisualLayers.Up, state == CryotronVisuals.Up);
+        sprite.LayerSetVisible(CryotronVisualLayers.Down, state == CryotronVisuals.Down);
+        sprite.LayerSetVisible(CryotronVisualLayers.GoUp, state == CryotronVisuals.GoingUp);
+        sprite.LayerSetVisible(CryotronVisualLayers.GoDown, state == CryotronVisuals.GoingDown);
 
         if (state == CryotronVisuals.GoingUp)
         {
