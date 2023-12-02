@@ -16,7 +16,7 @@
           </BoxContainer>
           <BoxContainer Margin="10 0 10 0" Orientation="Vertical">
               <Label Text="{Loc 'cryotron-temporary-title'}" StyleClasses="StatusFieldTitle" />
-              <Label Text="{Loc 'cryotron-temporary-desc'}" />
+              <Label Name="TemporaryDescriptionLabel" Text="{Loc 'cryotron-temporary-desc'}" />
               <Button Name="TemporarySleepButton"
                   Text="{Loc 'cryotron-temporary-button'}"
                   Disabled="True"></Button>

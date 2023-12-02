@@ -10,6 +10,12 @@ public sealed partial class CryotronComponent : Component
     public ContainerSlot BodyContainer = default!;
 
     /// <summary>
+    /// How much time to wait before they can exit temporary sleep
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite), DataField("minimumSleepTime")]
+    public TimeSpan MinimumSleepTime = TimeSpan.FromSeconds(300);
+
+    /// <summary>
     /// How long it takes the animation to open the cryotron
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField("openDelay")]

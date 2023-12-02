@@ -33,10 +33,16 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Cryotron\CryotronWindow.xaml" />
+    <EmbeddedResource Remove="cryotron\ui\CryotronWakeUpWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Cryotron\UI\CryotronWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Update="Cryotron\UI\CryotronWakeUpWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AdditionalFiles>
   </ItemGroup>
 </Project>

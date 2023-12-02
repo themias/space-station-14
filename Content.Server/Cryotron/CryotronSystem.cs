@@ -10,8 +10,8 @@ using Content.Shared.Database;
 using Content.Shared.Destructible;
 using Content.Shared.DragDrop;
 using Content.Shared.Examine;
+using Content.Shared.Humanoid;
 using Content.Shared.Mind;
-using Content.Shared.Movement.Events;
 using Content.Shared.Verbs;
 using Robust.Server.GameObjects;
 using Robust.Shared.Containers;
@@ -46,7 +46,6 @@ public sealed class CryotronSystem : SharedCryotronSystem
         SubscribeLocalEvent<CryotronComponent, DragDropTargetEvent>(OnDragDropOn);
         SubscribeLocalEvent<CryotronComponent, DestructionEventArgs>(OnDestroyed);
         SubscribeLocalEvent<CryotronComponent, ExaminedEvent>(OnExamined);
-        SubscribeLocalEvent<CryotronComponent, ContainerRelayMovementEntityEvent>(OnRelayMovement);
         SubscribeLocalEvent<CryotronComponent, GetVerbsEvent<AlternativeVerb>>(OnAltVerb);
 
         SubscribeLocalEvent<CryotronComponent, BoundUIOpenedEvent>(OnCryotronBUIOpened);
@@ -65,9 +64,9 @@ public sealed class CryotronSystem : SharedCryotronSystem
 
     private void OnCryotronBUIOpened(EntityUid uid, CryotronComponent component, BoundUIOpenedEvent args)
     {
-        if (TryComp<InCryotronComponent>(args.Entity, out var inCrytronComp))
+        if (TryComp<InCryotronComponent>(args.Entity, out var inCryotronComp))
         {
-            UpdateUserInterface(uid, component, inCrytronComp, null);
+            UpdateUserInterface(uid, component, inCryotronComp, null);
         }
         else
         {
@@ -99,8 +98,12 @@ public sealed class CryotronSystem : SharedCryotronSystem
         {
             if (CompOrNull<MindComponent>(to_insert)?.UserId != null)
             {
-                //Tried to put a non-SSD person into the sleeper!
-                _popupSystem.PopupEntity("You can't put them into the Cryotron!", inserter.Value); //TODO: localize
+                _popupSystem.PopupEntity(Loc.GetString("cryotron-insert-failure-not-ssd", ("body", to_insert)), inserter.Value);
+                return;
+            }
+            else if (!HasComp<HumanoidAppearanceComponent>(to_insert))
+            {
+                _popupSystem.PopupEntity(Loc.GetString("cryotron-insert-failure-not-humanoid", ("body", to_insert)), inserter.Value);
                 return;
             }
 
@@ -114,7 +117,7 @@ public sealed class CryotronSystem : SharedCryotronSystem
         {
             var inCryotronComp = EnsureComp<InCryotronComponent>(to_insert);
             inCryotronComp.PermanentSleep = permanent;
-            inCryotronComp.EndTime = _timing.CurTime + (permanent ? TimeSpan.Zero : inCryotronComp.SleepTime);
+            inCryotronComp.EndTime = _timing.CurTime + (permanent ? TimeSpan.Zero : cryoComponent.MinimumSleepTime);
 
             _containerSystem.Insert(to_insert, cryoComponent.BodyContainer);
             _adminLogger.Add(LogType.Action, LogImpact.Low, $"{_entityManager.ToPrettyString(to_insert):user} put themself into cryotron (id:{uid.Id})");
@@ -181,12 +184,11 @@ public sealed class CryotronSystem : SharedCryotronSystem
 
         if(insideComponent != null)
         {
-            var remainingTime = insideComponent.EndTime - _timing.CurTime;
-            state = new CryotronUiState(true, remainingTime, buttonEnableEndTime);
+            state = new CryotronUiState(true, cryotronComponent.MinimumSleepTime, insideComponent.EndTime, buttonEnableEndTime);
         }
         else
         {
-            state = new CryotronUiState(false, null, buttonEnableEndTime);
+            state = new CryotronUiState(false, cryotronComponent.MinimumSleepTime, null, buttonEnableEndTime);
         }
 
         _userInterface.TrySetUiState(uid, CryotronUiKey.Key, state);
@@ -217,22 +219,13 @@ public sealed class CryotronSystem : SharedCryotronSystem
             return;
 
         InsertBody(uid, args.Session.AttachedEntity.Value, component, null);
+
+        if(TryComp<InCryotronComponent>(args.Session.AttachedEntity.Value, out var inCryotronComp))
+            UpdateUserInterface(uid, component, inCryotronComp, null);
     }
 
     private void OnWakeUpButtonPressed(EntityUid uid, CryotronComponent component, CryotronWakeUpButtonPressedEvent args)
     {
-        EjectBody(uid, component);
-    }
-
-    private void OnRelayMovement(EntityUid uid, CryotronComponent component, ref ContainerRelayMovementEntityEvent args)
-    {
-        if (TryComp<InCryotronComponent>(args.Entity, out var inCryotronComp)
-            && _timing.CurTime < inCryotronComp.EndTime)
-        {
-            _popupSystem.PopupEntity("Can't wake up!", args.Entity); //wake me up
-            return;
-        }
-
         EjectBody(uid, component);
     }
 

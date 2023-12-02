@@ -10,6 +10,9 @@ public sealed class CryotronBoundUserInterface : BoundUserInterface
     [ViewVariables]
     private CryotronWindow? _window;
 
+    [ViewVariables]
+    private CryotronWakeUpWindow? _wakeUpWindow;
+
     public CryotronBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
     {
     }
@@ -18,7 +21,7 @@ public sealed class CryotronBoundUserInterface : BoundUserInterface
     {
         base.Open();
 
-        _window = new(Owner);
+        _window = new();
 
         _window.OpenCentered();
         _window.OnClose += Close;
@@ -33,11 +36,18 @@ public sealed class CryotronBoundUserInterface : BoundUserInterface
         {
             SendMessage(new CryotronTemporarySleepButtonPressedEvent());
             _window.Close();
+            OpenWakeUpWindow();
         };
+    }
 
-        _window.OnWakeUpButtonPressed += () =>
+    private void OpenWakeUpWindow()
+    {
+        _wakeUpWindow = new();
+
+        _wakeUpWindow.OnWakeUpButtonPressed += () =>
         {
             SendMessage(new CryotronWakeUpButtonPressedEvent());
+            _wakeUpWindow.Close();
         };
     }
 

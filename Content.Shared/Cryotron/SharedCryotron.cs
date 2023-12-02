@@ -45,13 +45,16 @@ public sealed class CryotronWakeUpButtonPressedEvent : BoundUserInterfaceMessage
 public sealed class CryotronUiState : BoundUserInterfaceState
 {
     public bool InsideCryotron { get; }
+    public TimeSpan TotalSleepTime { get; }
     public TimeSpan? WakeUpEndTime { get; }
     public TimeSpan? ButtonEnableEndTime { get; }
 
     public CryotronUiState(bool insideCryotron,
+        TimeSpan totalSleepTime,
         TimeSpan? wakeUpEndTime,
         TimeSpan? buttonEnableEndTime)
     {
+        TotalSleepTime = totalSleepTime;
         InsideCryotron = insideCryotron;
         WakeUpEndTime = wakeUpEndTime;
         ButtonEnableEndTime = buttonEnableEndTime;

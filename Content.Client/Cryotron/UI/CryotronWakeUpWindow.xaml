@@ -1,0 +1,15 @@
+<controls:FancyWindow xmlns="https://spacestation14.io"
+                xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+                Title="{Loc 'cryotron-title'}"
+                Resizable="False">
+    <BoxContainer Margin="0 0"
+                Orientation="Horizontal"
+                HorizontalExpand="True"
+                VerticalExpand="True">
+        <Label Text="{Loc 'cryotron-wakeup-title'}" StyleClasses="StatusFieldTitle" />
+        <Label Text="{Loc 'cryotron-wakeup-desc'}" />
+        <Button Name="WakeUpButton"
+                  Text="{Loc 'cryotron-wakeup-button'}"
+                  Disabled="True"></Button>
+    </BoxContainer>
+</controls:FancyWindow>
