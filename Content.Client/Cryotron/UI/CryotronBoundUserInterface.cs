@@ -26,21 +26,18 @@ public sealed class CryotronBoundUserInterface : BoundUserInterface
         _window.OnPermanentSleepButtonPressed += () =>
         {
             SendMessage(new CryotronPermanentSleepButtonPressedEvent());
+            _window.Close();
         };
 
         _window.OnTemporarySleepButtonPressed += () =>
         {
             SendMessage(new CryotronTemporarySleepButtonPressedEvent());
+            _window.Close();
         };
 
         _window.OnWakeUpButtonPressed += () =>
         {
             SendMessage(new CryotronWakeUpButtonPressedEvent());
-        };
-
-        _window.OnCancelButtonPressed += () =>
-        {
-            _window.Close();
         };
     }
 

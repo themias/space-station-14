@@ -19,5 +19,5 @@ public sealed partial class InCryotronComponent : Component
     /// EndTime for when they can wake up
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField("endTime")]
-    public TimeSpan EndTime;
+    public TimeSpan EndTime = TimeSpan.Zero;
 }

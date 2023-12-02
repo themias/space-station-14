@@ -1,7 +1,7 @@
 cryotron-title = Industrial Cryogenic Sleep Unit
 
 cryotron-permanent-title = Permanent Sleep
-cryotron-permanent-desc = Enter cryo sleep with no intention of awaking. NanoTrasen will free your employment for replacement.
+cryotron-permanent-desc = Enter cryo sleep with no intention of awaking. NanoTrasen will free your position for replacement.
 cryotron-permanent-button = Confirm
 
 cryotron-temporary-title = Temporary Sleep
@@ -11,3 +11,5 @@ cryotron-temporary-button = Confirm
 cryotron-cancel-title = Cancel
 cryotron-cancel-desc = Do not enter cryo sleep.
 cryotron-cancel-button = Cancel
+
+cryotron-admin-eject-all = Eject All

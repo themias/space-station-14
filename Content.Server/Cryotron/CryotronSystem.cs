@@ -1,16 +1,23 @@
+using Content.Server.Administration.Logs;
+using Content.Server.Administration.Managers;
 using Content.Server.Cryotron.Components;
 using Content.Server.GameTicking;
 using Content.Server.Popups;
 using Content.Shared.Body.Components;
 using Content.Shared.Climbing.Systems;
 using Content.Shared.Cryotron;
+using Content.Shared.Database;
 using Content.Shared.Destructible;
 using Content.Shared.DragDrop;
 using Content.Shared.Examine;
 using Content.Shared.Mind;
+using Content.Shared.Movement.Events;
+using Content.Shared.Verbs;
 using Robust.Server.GameObjects;
 using Robust.Shared.Containers;
+using Robust.Shared.Player;
 using Robust.Shared.Timing;
+using Robust.Shared.Utility;
 using System.Text;
 
 namespace Content.Server.Cryotron;
@@ -23,9 +30,12 @@ public sealed class CryotronSystem : SharedCryotronSystem
     [Dependency] private readonly PopupSystem _popupSystem = default!;
     [Dependency] private readonly AppearanceSystem _appearanceSystem = default!;
     [Dependency] private readonly UserInterfaceSystem _userInterface = default!;
-    [Dependency] protected readonly IGameTiming _timing = default!;
-    [Dependency] protected readonly SharedMindSystem _mindSystem = default!;
-    [Dependency] protected readonly GameTicker _gameTicker = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly SharedMindSystem _mindSystem = default!;
+    [Dependency] private readonly GameTicker _gameTicker = default!;
+    [Dependency] private readonly IAdminManager _adminManager = default!;
+    [Dependency] private readonly IAdminLogManager _adminLogger = default!;
+    [Dependency] private readonly IEntityManager _entityManager = default!;
 
     public override void Initialize()
     {
@@ -36,6 +46,8 @@ public sealed class CryotronSystem : SharedCryotronSystem
         SubscribeLocalEvent<CryotronComponent, DragDropTargetEvent>(OnDragDropOn);
         SubscribeLocalEvent<CryotronComponent, DestructionEventArgs>(OnDestroyed);
         SubscribeLocalEvent<CryotronComponent, ExaminedEvent>(OnExamined);
+        SubscribeLocalEvent<CryotronComponent, ContainerRelayMovementEntityEvent>(OnRelayMovement);
+        SubscribeLocalEvent<CryotronComponent, GetVerbsEvent<AlternativeVerb>>(OnAltVerb);
 
         SubscribeLocalEvent<CryotronComponent, BoundUIOpenedEvent>(OnCryotronBUIOpened);
         SubscribeLocalEvent<CryotronComponent, CryotronPermanentSleepButtonPressedEvent>(OnPermanentSleepButtonPressed);
@@ -96,6 +108,7 @@ public sealed class CryotronSystem : SharedCryotronSystem
             var inCryotronComp = EnsureComp<InCryotronComponent>(to_insert);
             inCryotronComp.EndTime = _timing.CurTime;
             _containerSystem.Insert(to_insert, cryoComponent.BodyContainer);
+            _adminLogger.Add(LogType.Action, $"{_entityManager.ToPrettyString(inserter):user} put {_entityManager.ToPrettyString(to_insert):target} into cryotron (id:{uid.Id})");
         }
         else
         {
@@ -104,6 +117,7 @@ public sealed class CryotronSystem : SharedCryotronSystem
             inCryotronComp.EndTime = _timing.CurTime + (permanent ? TimeSpan.Zero : inCryotronComp.SleepTime);
 
             _containerSystem.Insert(to_insert, cryoComponent.BodyContainer);
+            _adminLogger.Add(LogType.Action, LogImpact.Low, $"{_entityManager.ToPrettyString(to_insert):user} put themself into cryotron (id:{uid.Id})");
         }
 
         //_metadataSystem.SetEntityPaused(to_insert, true); //begin cryo sleep
@@ -124,6 +138,8 @@ public sealed class CryotronSystem : SharedCryotronSystem
         _containerSystem.Remove(contained, cryoComponent.BodyContainer);
 
         _climbSystem.ForciblySetClimbing(contained, uid);
+
+        _adminLogger.Add(LogType.Action, LogImpact.Low, $"{_entityManager.ToPrettyString(contained):user} was ejected from cryotron (id:{uid.Id})");
     }
 
     private void OnCanDragDropOn(EntityUid uid, CryotronComponent component, CanDropTargetEvent args)
@@ -161,16 +177,18 @@ public sealed class CryotronSystem : SharedCryotronSystem
 
     private void UpdateUserInterface(EntityUid uid, CryotronComponent cryotronComponent, InCryotronComponent? insideComponent, TimeSpan? buttonEnableEndTime)
     {
-        TimeSpan remainingTime = TimeSpan.Zero;
-        bool insideCryotron = false;
+        CryotronUiState state;
 
         if(insideComponent != null)
         {
-            insideCryotron = true;
-            remainingTime = insideComponent.EndTime - _timing.CurTime;
+            var remainingTime = insideComponent.EndTime - _timing.CurTime;
+            state = new CryotronUiState(true, remainingTime, buttonEnableEndTime);
+        }
+        else
+        {
+            state = new CryotronUiState(false, null, buttonEnableEndTime);
         }
 
-        var state = new CryotronUiState(insideCryotron, remainingTime, buttonEnableEndTime);
         _userInterface.TrySetUiState(uid, CryotronUiKey.Key, state);
     }
 
@@ -193,16 +211,44 @@ public sealed class CryotronSystem : SharedCryotronSystem
         }
     }
 
-    private void OnTemporarySleepButtonPressed(EntityUid uid, CryotronComponent cryotronComponent, CryotronTemporarySleepButtonPressedEvent args)
+    private void OnTemporarySleepButtonPressed(EntityUid uid, CryotronComponent component, CryotronTemporarySleepButtonPressedEvent args)
     {
         if (args.Session.AttachedEntity == null)
             return;
 
-        InsertBody(uid, args.Session.AttachedEntity.Value, cryotronComponent, null);
+        InsertBody(uid, args.Session.AttachedEntity.Value, component, null);
     }
 
-    private void OnWakeUpButtonPressed(EntityUid uid, CryotronComponent cryotronComponent, CryotronWakeUpButtonPressedEvent args)
+    private void OnWakeUpButtonPressed(EntityUid uid, CryotronComponent component, CryotronWakeUpButtonPressedEvent args)
     {
-        EjectBody(uid, cryotronComponent);
+        EjectBody(uid, component);
+    }
+
+    private void OnRelayMovement(EntityUid uid, CryotronComponent component, ref ContainerRelayMovementEntityEvent args)
+    {
+        if (TryComp<InCryotronComponent>(args.Entity, out var inCryotronComp)
+            && _timing.CurTime < inCryotronComp.EndTime)
+        {
+            _popupSystem.PopupEntity("Can't wake up!", args.Entity); //wake me up
+            return;
+        }
+
+        EjectBody(uid, component);
+    }
+
+    private void OnAltVerb(EntityUid uid, CryotronComponent component, GetVerbsEvent<AlternativeVerb> args)
+    {
+        if (!TryComp<ActorComponent>(args.User, out var actor))
+            return;
+
+        if (_adminManager.IsAdmin(actor.PlayerSession))
+        {
+            AlternativeVerb verb = new()
+            {
+                Act = () => EjectBody(uid, component),
+                Text = Loc.GetString("cryotron-admin-eject-all"),
+                Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/open.svg.192dpi.png")),
+            };
+        }
     }
 }
