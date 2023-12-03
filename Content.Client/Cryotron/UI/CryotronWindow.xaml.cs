@@ -13,8 +13,10 @@ public sealed partial class CryotronWindow : FancyWindow
 
     public event Action? OnPermanentSleepButtonPressed;
     public event Action? OnTemporarySleepButtonPressed;
+    public event Action? OnWakeUpButtonPressed;
 
     private TimeSpan _buttonEnableEndTime = TimeSpan.Zero;
+    private TimeSpan _wakeUpTime = TimeSpan.Zero;
 
     public CryotronWindow()
     {
@@ -23,6 +25,7 @@ public sealed partial class CryotronWindow : FancyWindow
 
         PermanentSleepButton.OnPressed += _ => OnPermanentSleepButtonPressed?.Invoke();
         TemporarySleepButton.OnPressed += _ => OnTemporarySleepButtonPressed?.Invoke();
+        //WakeUpButton.OnPressed += _ => OnWakeUpButtonPressed?.Invoke();
     }
 
     public void UpdateState(CryotronUiState state)
@@ -33,35 +36,64 @@ public sealed partial class CryotronWindow : FancyWindow
                 _buttonEnableEndTime = state.ButtonEnableEndTime.Value;
             UpdateButtonTimer();
 
+            TemporarySleepButton.Visible = true;
+            //WakeUpButton.Visible = false;
+
             var timeString = $"{state.TotalSleepTime.Minutes:0}:{state.TotalSleepTime.Seconds:00}";
             TemporaryDescriptionLabel.Text = Loc.GetString("cryotron-temporary-desc", ("time", timeString));
         }
+        /*else
+        {
+            if (state.WakeUpEndTime.HasValue)
+                _wakeUpTime = state.WakeUpEndTime.Value;
+            UpdateWakeUpTimer();
+
+            TemporarySleepButton.Visible = false;
+            WakeUpButton.Visible = true;
+        }*/
     }
 
     private void UpdateButtonTimer()
     {
         if (_timing.CurTime > _buttonEnableEndTime)
         {
-            PermanentSleepButton.Text = Loc.GetString("cryotron-permanent-button");
+            PermanentSleepButton.Text = Loc.GetString("cryotron-permanent-button", ("timeRemaining", ""));
             PermanentSleepButton.Disabled = false;
-            TemporarySleepButton.Text = Loc.GetString("cryotron-temporary-button");
+            TemporarySleepButton.Text = Loc.GetString("cryotron-temporary-button", ("timeRemaining", ""));
             TemporarySleepButton.Disabled = false;
         }
         else
         {
             var timeLeft = _buttonEnableEndTime - _timing.CurTime;
-            var timeString = $"{timeLeft.Seconds:0}.{timeLeft.Milliseconds:0}";
-            PermanentSleepButton.Text = timeString.ToString();
+            var timeString = " (" + timeLeft.ToString("s\\.ff") + ")";
+            PermanentSleepButton.Text = Loc.GetString("cryotron-permanent-button", ("timeRemaining", timeString.ToString()));
             PermanentSleepButton.Disabled = true;
-            TemporarySleepButton.Text = timeString.ToString();
+            TemporarySleepButton.Text = Loc.GetString("cryotron-temporary-button", ("timeRemaining", timeString.ToString()));
             TemporarySleepButton.Disabled = true;
         }
     }
+
+    /*private void UpdateWakeUpTimer()
+    {
+        if (_timing.CurTime > _wakeUpTime)
+        {
+            WakeUpButton.Text = Loc.GetString("cryotron-wakeup-button", ("timeRemaining", ""));
+            WakeUpButton.Disabled = false;
+        }
+        else
+        {
+            var timeLeft = _wakeUpTime - _timing.CurTime;
+            var timeString = $" ({timeLeft.Minutes:0}:{timeLeft.Seconds:00})";
+            WakeUpButton.Text = Loc.GetString("cryotron-wakeup-button", ("timeRemaining", timeString.ToString()));
+            WakeUpButton.Disabled = true;
+        }
+    }'*/
 
     protected override void FrameUpdate(FrameEventArgs args)
     {
         base.FrameUpdate(args);
 
         UpdateButtonTimer();
+        //UpdateWakeUpTimer();
     }
 }

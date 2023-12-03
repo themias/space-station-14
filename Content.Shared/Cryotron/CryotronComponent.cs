@@ -6,14 +6,13 @@ namespace Content.Server.Cryotron.Components;
 [RegisterComponent]
 public sealed partial class CryotronComponent : Component
 {
-    //turn into a list later
-    public ContainerSlot BodyContainer = default!;
+    public Container BodyContainer = default!;
 
     /// <summary>
     /// How much time to wait before they can exit temporary sleep
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField("minimumSleepTime")]
-    public TimeSpan MinimumSleepTime = TimeSpan.FromSeconds(300);
+    public TimeSpan MinimumSleepTime = TimeSpan.FromSeconds(30); //set to 300 upon PR
 
     /// <summary>
     /// How long it takes the animation to open the cryotron

@@ -1,17 +1,14 @@
 cryotron-title = Industrial Cryogenic Sleep Unit
-cryotron-display = The display reads: 
+cryotron-display = [color=lightblue]Current Occupants[/color]
+cryotron-display-empty = [color=grey]empty[/color]
 
 cryotron-permanent-title = Permanent Sleep
 cryotron-permanent-desc = Enter cryo sleep with no intention of awaking.
-cryotron-permanent-button = Confirm
+cryotron-permanent-button = Confirm{$timeRemaining}
 
 cryotron-temporary-title = Temporary Sleep
-cryotron-temporary-desc = Enter cryo sleep for at least {$time} after which you may leave cryo sleep.
-cryotron-temporary-button = Confirm
-
-cryotron-wakeup-title = In Cryo Sleep
-cryotron-wakeup-desc = Your biological functions are being maintained.
-cryotron-wakeup-button = Wake Up{$timeRemaining}
+cryotron-temporary-desc = Enter cryo sleep for at least {$time}.
+cryotron-temporary-button = Confirm{$timeRemaining}
 
 cryotron-insert-failure-not-ssd = {CAPITALIZE(OBJECT($body))} brain activity is too high to enter the sleeping unit!
 cryotron-insert-failure-not-humanoid = {CAPITALIZE(OBJECT($body))} body is not compatible with the sleeping unit!

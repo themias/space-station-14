@@ -37,7 +37,7 @@
         showEnts: true
   - type: Appearance
   - type: Cryotron
-  #- type: Climbable #might need this
+  - type: Climbable
   - type: Damageable
     damageContainer: Inorganic
     damageModifierSet: Metallic

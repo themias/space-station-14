@@ -1,3 +1,4 @@
+using Content.Server.Cryotron.Components;
 using Content.Server.Popups;
 using Content.Server.Sound.Components;
 using Content.Shared.Actions;
@@ -62,7 +63,8 @@ namespace Content.Server.Bed.Sleep
                 EnsureComp<StunnedComponent>(uid);
                 EnsureComp<KnockedDownComponent>(uid);
 
-                if (TryComp<SleepEmitSoundComponent>(uid, out var sleepSound))
+                if (TryComp<SleepEmitSoundComponent>(uid, out var sleepSound) &&
+                    !HasComp<InCryoSleepComponent>(uid))
                 {
                     var emitSound = EnsureComp<SpamEmitSoundComponent>(uid);
                     emitSound.Sound = sleepSound.Snore;
