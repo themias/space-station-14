@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Content.Client.Decals;
 using Content.Client.Stylesheets;
 using Content.Shared.Crayon;
 using Content.Shared.Decals;
@@ -18,20 +19,44 @@ namespace Content.Client.Crayon.UI
     [GenerateTypedNameReferences]
     public sealed partial class CrayonWindow : DefaultWindow
     {
+        [Dependency] private readonly IEntityManager _e = default!;
+
+        private readonly DecalPlacementSystem _decalPlacementSystem;
+
         public CrayonBoundUserInterface Owner { get; }
 
         private Dictionary<string, Texture>? _decals;
         private string? _selected;
         private Color _color;
+        private float _rotation;
+
+        public FloatSpinBox RotationSpinBox;
 
         public CrayonWindow(CrayonBoundUserInterface owner)
         {
             RobustXamlLoader.Load(this);
+            IoCManager.InjectDependencies(this);
+
+            _decalPlacementSystem = _e.System<DecalPlacementSystem>();
 
             Owner = owner;
 
             Search.OnTextChanged += _ => RefreshList();
             ColorSelector.OnColorChanged += SelectColor;
+
+            RotationSpinBox = new FloatSpinBox(90.0f, 0)
+            {
+                Value = _rotation,
+                HorizontalExpand = true
+            };
+            SpinBoxContainer.AddChild(RotationSpinBox);
+
+            RotationSpinBox.OnValueChanged += args =>
+            {
+                _rotation = args.Value;
+                Owner.SelectRotation(_rotation);
+                UpdateDecalPlacementInfo();
+            };
         }
 
         private void SelectColor(Color color)
@@ -41,6 +66,7 @@ namespace Content.Client.Crayon.UI
             Owner.SelectColor(color);
 
             RefreshList();
+            UpdateDecalPlacementInfo();
         }
 
         private void RefreshList()
@@ -92,6 +118,7 @@ namespace Content.Client.Crayon.UI
             Owner.Select(obj.Button.Name);
             _selected = obj.Button.Name;
             RefreshList();
+            UpdateDecalPlacementInfo();
         }
 
         public void UpdateState(CrayonBoundUserInterfaceState state)
@@ -99,13 +126,17 @@ namespace Content.Client.Crayon.UI
             _selected = state.Selected;
             ColorSelector.Visible = state.SelectableColor;
             _color = state.Color;
+            _rotation = state.Rotation;
 
             if (ColorSelector.Visible)
             {
                 ColorSelector.Color = state.Color;
             }
 
+            RotationSpinBox.Value = state.Rotation;
+
             RefreshList();
+            UpdateDecalPlacementInfo();
         }
 
         public void Populate(IEnumerable<DecalPrototype> prototypes)
@@ -117,6 +148,26 @@ namespace Content.Client.Crayon.UI
             }
 
             RefreshList();
+        }
+
+        private void UpdateDecalPlacementInfo()
+        {
+            if (_selected is null)
+                return;
+
+            _decalPlacementSystem.UpdateDecalInfo(_selected, _color, _rotation, snap: false, zIndex: 0, cleanable: true);
+        }
+
+        protected override void Opened()
+        {
+            base.Opened();
+            _decalPlacementSystem.SetActive(true);
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            _decalPlacementSystem.SetActive(false);
         }
     }
 }

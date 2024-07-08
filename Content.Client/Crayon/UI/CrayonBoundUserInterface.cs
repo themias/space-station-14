@@ -44,6 +44,11 @@ namespace Content.Client.Crayon.UI
             SendMessage(new CrayonColorMessage(color));
         }
 
+        public void SelectRotation(float rotation)
+        {
+            SendMessage(new CrayonRotationMessage(rotation));
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
