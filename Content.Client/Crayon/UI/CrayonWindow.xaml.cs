@@ -21,7 +21,7 @@ namespace Content.Client.Crayon.UI
     {
         [Dependency] private readonly IEntityManager _e = default!;
 
-        private readonly DecalPlacementSystem _decalPlacementSystem;
+        private readonly CrayonSystem _crayonSystem;
 
         public CrayonBoundUserInterface Owner { get; }
 
@@ -37,7 +37,7 @@ namespace Content.Client.Crayon.UI
             RobustXamlLoader.Load(this);
             IoCManager.InjectDependencies(this);
 
-            _decalPlacementSystem = _e.System<DecalPlacementSystem>();
+            _crayonSystem = _e.System<CrayonSystem>();
 
             Owner = owner;
 
@@ -55,7 +55,7 @@ namespace Content.Client.Crayon.UI
             {
                 _rotation = args.Value;
                 Owner.SelectRotation(_rotation);
-                UpdateDecalPlacementInfo();
+                UpdateCrayonDecalPlacementInfo();
             };
         }
 
@@ -66,7 +66,7 @@ namespace Content.Client.Crayon.UI
             Owner.SelectColor(color);
 
             RefreshList();
-            UpdateDecalPlacementInfo();
+            UpdateCrayonDecalPlacementInfo();
         }
 
         private void RefreshList()
@@ -118,7 +118,7 @@ namespace Content.Client.Crayon.UI
             Owner.Select(obj.Button.Name);
             _selected = obj.Button.Name;
             RefreshList();
-            UpdateDecalPlacementInfo();
+            UpdateCrayonDecalPlacementInfo();
         }
 
         public void UpdateState(CrayonBoundUserInterfaceState state)
@@ -136,7 +136,7 @@ namespace Content.Client.Crayon.UI
             RotationSpinBox.Value = state.Rotation;
 
             RefreshList();
-            UpdateDecalPlacementInfo();
+            UpdateCrayonDecalPlacementInfo();
         }
 
         public void Populate(IEnumerable<DecalPrototype> prototypes)
@@ -150,24 +150,24 @@ namespace Content.Client.Crayon.UI
             RefreshList();
         }
 
-        private void UpdateDecalPlacementInfo()
+        private void UpdateCrayonDecalPlacementInfo()
         {
             if (_selected is null)
                 return;
 
-            _decalPlacementSystem.UpdateDecalInfo(_selected, _color, _rotation, snap: false, zIndex: 0, cleanable: true);
+            _crayonSystem.UpdateCrayonDecalInfo(_selected, _color, _rotation);
         }
 
         protected override void Opened()
         {
             base.Opened();
-            _decalPlacementSystem.SetActive(true);
+            _crayonSystem.SetActive(true);
         }
 
         public override void Close()
         {
             base.Close();
-            _decalPlacementSystem.SetActive(false);
+            _crayonSystem.SetActive(false);
         }
     }
 }
