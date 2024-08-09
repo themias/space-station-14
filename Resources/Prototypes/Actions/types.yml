@@ -54,6 +54,7 @@
       sprite: Clothing/Back/Backpacks/backpack.rsi
       state: icon
     event: !type:OpenStorageImplantEvent
+    useDelay: 1 # already built in to opening storage, so this adds the delay animation to the action bar
 
 - type: entity
   parent: BaseSuicideAction

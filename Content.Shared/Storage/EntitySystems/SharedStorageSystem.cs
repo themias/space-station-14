@@ -402,7 +402,10 @@ public abstract class SharedStorageSystem : EntitySystem
         if (args.Handled)
             return;
 
-        OpenStorageUI(uid, args.Performer, storageComp, false);
+        if (!_ui.IsUiOpen(uid, StorageComponent.StorageUiKey.Key, args.Performer))
+            OpenStorageUI(uid, args.Performer, storageComp, false);
+        else
+            _ui.CloseUi(uid, StorageComponent.StorageUiKey.Key, args.Performer);
         args.Handled = true;
     }
 
