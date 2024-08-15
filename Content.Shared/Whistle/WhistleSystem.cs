@@ -1,5 +1,6 @@
 using Content.Shared.Coordinates;
 using Content.Shared.Humanoid;
+using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Stealth.Components;
 using JetBrains.Annotations;
@@ -18,6 +19,7 @@ public sealed class WhistleSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<WhistleComponent, UseInHandEvent>(OnUseInHand);
+        SubscribeLocalEvent<WhistleComponent, ActivateInWorldEvent>(OnActivate);
     }
 
     private void ExclamateTarget(EntityUid target, WhistleComponent component)
@@ -26,6 +28,15 @@ public sealed class WhistleSystem : EntitySystem
     }
 
     public void OnUseInHand(EntityUid uid, WhistleComponent component, UseInHandEvent args)
+    {
+        if (!_timing.IsFirstTimePredicted)
+            return;
+
+        TryMakeLoudWhistle(uid, args.User, component);
+        args.Handled = true;
+    }
+
+    public void OnActivate(EntityUid uid, WhistleComponent component, ActivateInWorldEvent args)
     {
         if (!_timing.IsFirstTimePredicted)
             return;

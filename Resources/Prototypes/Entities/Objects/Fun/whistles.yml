@@ -19,6 +19,9 @@
   - type: EmitSoundOnUse
     sound:
       collection: BaseWhistle
+  - type: EmitSoundOnActivate
+    sound:
+      collection: BaseWhistle
   - type: Whistle
     distance: 3
 
