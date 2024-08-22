@@ -53,6 +53,7 @@ namespace Content.Shared.Cuffs
         [Dependency] private readonly SharedPopupSystem _popup = default!;
         [Dependency] private readonly SharedTransformSystem _transform = default!;
         [Dependency] private readonly UseDelaySystem _delay = default!;
+        [Dependency] private readonly SharedAppearanceSystem _apperance = default!;
 
         public override void Initialize()
         {
@@ -495,6 +496,12 @@ namespace Content.Shared.Cuffs
                 return false;
             }
 
+            if (handcuffComponent.Broken)
+            {
+                _popup.PopupClient(Loc.GetString("handcuff-component-cuffs-broken-error"), user);
+                return false;
+            }
+
             var cuffTime = handcuffComponent.CuffTime;
 
             if (HasComp<StunnedComponent>(target))
@@ -680,12 +687,11 @@ namespace Content.Shared.Cuffs
 
             if (_net.IsServer)
             {
-                // Handles spawning broken cuffs on server to avoid client misprediction
                 if (cuff.BreakOnRemove)
                 {
-                    QueueDel(cuffsToRemove);
-                    var trash = Spawn(cuff.BrokenPrototype, Transform(cuffsToRemove).Coordinates);
-                    _hands.PickupOrDrop(user, trash);
+                    cuff.Broken = true;
+                    Dirty(cuffsToRemove, cuff);
+                    _hands.PickupOrDrop(user, cuffsToRemove);
                 }
                 else
                 {

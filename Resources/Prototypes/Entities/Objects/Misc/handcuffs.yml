@@ -29,6 +29,7 @@
     - Antagonists
   - type: UseDelay
     delay: 3
+  - type: Appearance
 
 - type: entity
   name: makeshift handcuffs
@@ -42,7 +43,6 @@
     bodyIconState: body-overlay
     color: forestgreen
     breakOnRemove: true
-    brokenPrototype: CablecuffsBroken
     startCuffSound:
       path: /Audio/Items/Handcuffs/rope_start.ogg
     endCuffSound:
@@ -66,8 +66,13 @@
           color: forestgreen
   - type: Sprite
     sprite: Objects/Misc/cablecuffs.rsi
-    state: cuff
-    color: forestgreen
+    layers:
+    - state: cuff
+      color: forestgreen
+      map: ["enum.HandcuffVisualLayers.Unbroken"]
+    - state: cuff-broken
+      color: forestgreen
+      map: ["enum.HandcuffVisualLayers.Broken"]
 
 - type: entity
   name: zipties
@@ -83,7 +88,6 @@
     cuffedRSI: Objects/Misc/cablecuffs.rsi  # cablecuffs will look fine
     bodyIconState: body-overlay
     breakOnRemove: true
-    brokenPrototype: ZiptiesBroken
     startCuffSound:
       path: /Audio/Items/Handcuffs/ziptie_start.ogg
     endCuffSound:
@@ -96,7 +100,11 @@
       path: /Audio/Items/Handcuffs/rope_takeoff.ogg
   - type: Sprite
     sprite: Objects/Misc/zipties.rsi
-    state: cuff
+    layers:
+    - state: cuff
+      map: ["enum.HandcuffVisualLayers.Unbroken"]
+    - state: cuff-broken
+      map: ["enum.HandcuffVisualLayers.Broken"]
 
 - type: entity
   id: BaseHandcuffsBroken
@@ -111,6 +119,8 @@
   - type: PhysicalComposition
     materialComposition:
       Plastic: 25
+  - type: Handcuff
+    broken: true
 
 - type: entity
   name: broken zipties

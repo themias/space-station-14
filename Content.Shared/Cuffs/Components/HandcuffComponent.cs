@@ -5,7 +5,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Cuffs.Components;
 
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
 [Access(typeof(SharedCuffableSystem))]
 public sealed partial class HandcuffComponent : Component
 {
@@ -40,10 +40,10 @@ public sealed partial class HandcuffComponent : Component
     public bool BreakOnRemove;
 
     /// <summary>
-    ///     Will the cuffs break when removed?
+    ///     Are these cuffs currently broken?
     /// </summary>
-    [DataField, ViewVariables(VVAccess.ReadWrite)]
-    public EntProtoId? BrokenPrototype;
+    [DataField, ViewVariables, AutoNetworkedField]
+    public bool Broken = false;
 
     /// <summary>
     /// Whether or not these cuffs are in the process of being removed.
