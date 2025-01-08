@@ -16,6 +16,7 @@
     state: box
     layers:
     - state: box
+      map: ["closeLayer"]
     - state: box-open
       map: ["openLayer"]
       visible: false
@@ -38,7 +39,8 @@
       map: ["pink-box6"]
       visible: false
   - type: Storage
-    maxSlots: 6
+    grid:
+    - 0,0,5,0
     whitelist:
       tags:
       - Donut
@@ -78,6 +80,7 @@
     state: box-closed
     layers:
     - state: box-closed
+      map: ["closeLayer"]
     - state: box-open
       map: ["openLayer"]
       visible: false
@@ -118,7 +121,8 @@
       map: ["box12"]
       visible: false
   - type: Storage
-    maxSlots: 12
+    grid:
+    - 0,0,5,1
     whitelist:
       tags:
       - Egg
@@ -206,14 +210,19 @@
       map: ["enum.StorageVisualLayers.Door"]
   # TODO make these entitystorage again + placeablesurface after entity storage ECS gets merged.
   - type: Storage
-    maxSlots: 1
+    grid:
+    - 0,0,3,1
     maxItemSize: Normal
     whitelist:
+      components:
+      - Utensil
       tags:
       - Pizza
   - type: Item
     sprite: Objects/Consumable/Food/Baked/pizza.rsi
     heldPrefix: box
+    shape:
+    - 0,0,2,1
   - type: Appearance
   - type: EntityStorageVisuals
     stateDoorOpen: box-open
@@ -261,6 +270,21 @@
     - id: FoodPizzaDonkpocket
       prob: 0.10
       orGroup: Pizza
+    - id: FoodPizzaCotton
+      prob: 0.10
+      orGroup: Pizza
+    - id: KnifePlastic
+  
+- type: entity
+  name: pizza box
+  parent: FoodBoxPizzaFilled
+  id: FoodBoxPizzaCotton
+  suffix: Cotton Pizza
+  components:
+  - type: StorageFill
+    contents:
+    - id: FoodPizzaCotton
+    - id: KnifePlastic
 
 # Nugget
 
@@ -275,6 +299,7 @@
     state: box
     layers:
     - state: box
+      map: ["closeLayer"]
     - state: box-open
       map: ["openLayer"]
       visible: false
@@ -297,7 +322,8 @@
       map: ["box6"]
       visible: false
   - type: Storage
-    maxSlots: 6
+    grid:
+    - 0,0,1,2
   - type: Item
     sprite: Objects/Consumable/Food/Baked/nuggets.rsi
     size: Small
@@ -331,7 +357,8 @@
     sprite: Objects/Consumable/Food/Baked/donkpocket.rsi
     state: box
   - type: Storage
-    maxTotalWeight: 12
+    grid:
+    - 0,0,3,2
     whitelist:
       tags:
       - DonkPocket
@@ -387,16 +414,28 @@
 
 - type: entity
   parent: FoodBoxDonkpocket
-  id: FoodBoxDonkpocketGondola
-  name: box of gondola-flavoured donk-pockets
+  id: FoodBoxDonkpocketStonk
+  name: box of limited edition stonk-pockets
   components:
   - type: Sprite
-    state: gondola-box
+    state: stonk-box
   - type: Item
     sprite: Objects/Consumable/Food/Baked/donkpocket.rsi
   - type: StorageFill
     contents:
-    - id: FoodDonkpocketGondola
+    - id: FoodDonkpocketStonk
+      amount: 6
+
+- type: entity
+  parent: FoodBoxDonkpocket
+  id: FoodBoxDonkpocketCarp
+  name: box of carp-pockets
+  components:
+  - type: Sprite
+    state: carp-box
+  - type: StorageFill
+    contents:
+    - id: FoodDonkpocketCarp
       amount: 6
 
 - type: entity
@@ -454,11 +493,16 @@
     state: box
     layers:
     - state: box
+      map: ["closeLayer"]
     - state: box-open
       map: ["openLayer"]
   - type: Item
     sprite: Objects/Storage/Happyhonk/clown.rsi
     heldPrefix: box
+  - type: Storage
+    maxItemSize: Normal
+    grid:
+    - 0,0,3,3
   - type: Tag
     tags:
     - Trash
@@ -535,7 +579,6 @@
   - type: Tag
     tags:
     - Trash
-    - HappyHonk
     - MimeHappyHonk
   - type: Sprite
     sprite: Objects/Storage/Happyhonk/mime.rsi
@@ -546,7 +589,7 @@
 
 - type: entity
   id: HappyHonkNukie
-  parent: HappyHonk
+  parent: [HappyHonk, BaseSyndicateContraband]
   name: robust nukie meal
   description: A sus meal with a potentially explosive surprise.
   suffix: Toy Unsafe
@@ -583,7 +626,8 @@
   name: syndicate snack box
   components:
   - type: Storage
-    maxSlots: 9
+    grid:
+    - 0,0,5,2
   - type: StorageFill
     contents:
     # toy
@@ -631,6 +675,10 @@
   name: woeful cluwne meal
   description: Nothing good can come of this.
   components:
+  - type: Tag
+    tags:
+    - Trash
+    - CluwneHappyHonk
   - type: Sprite
     sprite: Objects/Storage/Happyhonk/cluwne.rsi
     state: box
@@ -645,7 +693,7 @@
   id: FoodMealHappyHonkClown
   parent: HappyHonk
   suffix: random food spawner meal
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: StorageFill
     contents:
@@ -656,6 +704,8 @@
       - id: DrinkColaCan
         orGroup: DrinkPool
       - id: DrinkLemonLimeCan
+        orGroup: DrinkPool
+      - id: DrinkLemonLimeCranberryCan
         orGroup: DrinkPool
       - id: DrinkIcedTeaCan
         orGroup: DrinkPool

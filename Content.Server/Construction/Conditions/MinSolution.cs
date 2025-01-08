@@ -33,8 +33,8 @@ public sealed partial class MinSolution : IGraphCondition
 
     public bool Condition(EntityUid uid, IEntityManager entMan)
     {
-        var containerSys = entMan.System<SolutionContainerSystem>();
-        if (!containerSys.TryGetSolution(uid, Solution, out var solution))
+        var containerSys = entMan.System<SharedSolutionContainerSystem>();
+        if (!containerSys.TryGetSolution(uid, Solution, out _, out var solution))
             return false;
 
         solution.TryGetReagentQuantity(Reagent, out var quantity);
@@ -46,8 +46,8 @@ public sealed partial class MinSolution : IGraphCondition
         var entMan = IoCManager.Resolve<IEntityManager>();
         var uid = args.Examined;
 
-        var containerSys = entMan.System<SolutionContainerSystem>();
-        if (!containerSys.TryGetSolution(uid, Solution, out var solution))
+        var containerSys = entMan.System<SharedSolutionContainerSystem>();
+        if (!containerSys.TryGetSolution(uid, Solution, out _, out var solution))
             return false;
 
         solution.TryGetReagentQuantity(Reagent, out var quantity);

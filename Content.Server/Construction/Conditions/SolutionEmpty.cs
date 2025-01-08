@@ -18,8 +18,8 @@ public sealed partial class SolutionEmpty : IGraphCondition
 
     public bool Condition(EntityUid uid, IEntityManager entMan)
     {
-        var containerSys = entMan.System<SolutionContainerSystem>();
-        if (!containerSys.TryGetSolution(uid, Solution, out var solution))
+        var containerSys = entMan.System<SharedSolutionContainerSystem>();
+        if (!containerSys.TryGetSolution(uid, Solution, out _, out var solution))
             return false;
 
         return solution.Volume == 0;
@@ -30,8 +30,8 @@ public sealed partial class SolutionEmpty : IGraphCondition
         var entMan = IoCManager.Resolve<IEntityManager>();
         var uid = args.Examined;
 
-        var containerSys = entMan.System<SolutionContainerSystem>();
-        if (!containerSys.TryGetSolution(uid, Solution, out var solution))
+        var containerSys = entMan.System<SharedSolutionContainerSystem>();
+        if (!containerSys.TryGetSolution(uid, Solution, out _, out var solution))
             return false;
 
         // already empty so dont show examine

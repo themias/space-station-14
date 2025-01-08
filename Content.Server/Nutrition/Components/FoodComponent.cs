@@ -1,4 +1,5 @@
 using Content.Server.Body.Components;
+using Content.Shared.Nutrition.Components;
 using Content.Server.Nutrition.EntitySystems;
 using Content.Shared.FixedPoint;
 using Robust.Shared.Audio;
@@ -6,17 +7,17 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server.Nutrition.Components;
 
-[RegisterComponent, Access(typeof(FoodSystem))]
+[RegisterComponent, Access(typeof(FoodSystem), typeof(FoodSequenceSystem))]
 public sealed partial class FoodComponent : Component
 {
     [DataField]
     public string Solution = "food";
 
     [DataField]
-    public SoundSpecifier UseSound = new SoundPathSpecifier("/Audio/Items/eatfood.ogg");
+    public SoundSpecifier UseSound = new SoundCollectionSpecifier("eating");
 
     [DataField]
-    public EntProtoId? Trash;
+    public List<EntProtoId> Trash = new();
 
     [DataField]
     public FixedPoint2? TransferAmount = FixedPoint2.New(5);
@@ -67,4 +68,10 @@ public sealed partial class FoodComponent : Component
     /// </summary>
     [DataField]
     public float ForceFeedDelay = 3;
+
+    /// <summary>
+    /// For mobs that are food, requires killing them before eating.
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public bool RequireDead = true;
 }

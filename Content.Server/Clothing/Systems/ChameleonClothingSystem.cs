@@ -1,4 +1,4 @@
-﻿using Content.Server.IdentityManagement;
+using Content.Server.IdentityManagement;
 using Content.Shared.Clothing.Components;
 using Content.Shared.Clothing.EntitySystems;
 using Content.Shared.IdentityManagement.Components;
@@ -33,13 +33,13 @@ public sealed class ChameleonClothingSystem : SharedChameleonClothingSystem
 
     private void OnVerb(EntityUid uid, ChameleonClothingComponent component, GetVerbsEvent<InteractionVerb> args)
     {
-        if (!args.CanAccess || !args.CanInteract)
+        if (!args.CanAccess || !args.CanInteract || component.User != args.User)
             return;
 
         args.Verbs.Add(new InteractionVerb()
         {
             Text = Loc.GetString("chameleon-component-verb-text"),
-            Icon = new SpriteSpecifier.Texture(new ("/Textures/Interface/VerbIcons/settings.svg.192dpi.png")),
+            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/settings.svg.192dpi.png")),
             Act = () => TryOpenUi(uid, args.User, component)
         });
     }
@@ -63,8 +63,8 @@ public sealed class ChameleonClothingSystem : SharedChameleonClothingSystem
         if (!Resolve(uid, ref component))
             return;
 
-        var state = new ChameleonBoundUserInterfaceState(component.Slot, component.Default);
-        _uiSystem.TrySetUiState(uid, ChameleonUiKey.Key, state);
+        var state = new ChameleonBoundUserInterfaceState(component.Slot, component.Default, component.RequireTag);
+        _uiSystem.SetUiState(uid, ChameleonUiKey.Key, state);
     }
 
     /// <summary>
@@ -84,14 +84,14 @@ public sealed class ChameleonClothingSystem : SharedChameleonClothingSystem
         // make sure that it is valid change
         if (string.IsNullOrEmpty(protoId) || !_proto.TryIndex(protoId, out EntityPrototype? proto))
             return;
-        if (!IsValidTarget(proto, component.Slot))
+        if (!IsValidTarget(proto, component.Slot, component.RequireTag))
             return;
         component.Default = protoId;
 
         UpdateIdentityBlocker(uid, component, proto);
         UpdateVisuals(uid, component);
         UpdateUi(uid, component);
-        Dirty(component);
+        Dirty(uid, component);
     }
 
     private void UpdateIdentityBlocker(EntityUid uid, ChameleonClothingComponent component, EntityPrototype proto)

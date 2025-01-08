@@ -49,6 +49,20 @@
       - MobCorgiIanPup
 
 - type: entity
+  name: Dev Mouse Spawner
+  id: SpawnMobCorgiMouse
+  suffix: Admeme
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+      - state: green
+      - state: ai
+  - type: ConditionalSpawner
+    prototypes:
+      - MobCorgiMouse
+
+- type: entity
   name: Possum Morty Spawner
   id: SpawnMobPossumMorty
   parent: MarkerBase
@@ -59,7 +73,7 @@
       - state: ai
   - type: ConditionalSpawner
     prototypes:
-      - MobPossumMorty
+      - MobPossumMortyOld
 
 - type: entity
   name: Raccoon Morticia Spawner
@@ -73,20 +87,6 @@
   - type: ConditionalSpawner
     prototypes:
       - MobRaccoonMorticia
-
-- type: entity
-  name: Drone Spawner
-  id: SpawnMobDrone
-  parent: MarkerBase
-  components:
-  - type: Sprite
-    layers:
-      - state: green
-      - sprite: Mobs/Silicon/drone.rsi
-        state: shell
-  - type: ConditionalSpawner
-    prototypes:
-      - Drone
 
 - type: entity
   name: Fox Renault Spawner
@@ -128,6 +128,19 @@
       - MobCatException
 
 - type: entity
+  name: Tropico Spawner
+  id: SpawnMobCrabAtmos
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+      - state: green
+      - state: ai
+  - type: ConditionalSpawner
+    prototypes:
+      - MobCrabAtmos
+
+- type: entity
   name: Floppa Spawner
   id: SpawnMobCatFloppa
   parent: MarkerBase
@@ -165,7 +178,7 @@
   - type: ConditionalSpawner
     prototypes:
       - MobCatSpace
-    
+
 - type: entity
   name: Kitten Spawner
   id: SpawnMobCatKitten
@@ -372,7 +385,8 @@
   - type: Sprite
     layers:
       - state: green
-      - state: ai
+      - state: shiva
+        sprite: Mobs/Pets/shiva.rsi
   - type: ConditionalSpawner
     prototypes:
       - MobSpiderShiva
@@ -427,10 +441,25 @@
   - type: Sprite
     layers:
     - state: green
-    - state: ai
+    - state: spacespider
+      sprite: Mobs/Animals/spacespider.rsi
   - type: ConditionalSpawner
     prototypes:
     - MobSpiderSpace
+
+- type: entity
+  name: Space Cobra Spawner
+  id: SpawnMobSpaceCobra
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - state: spacecobra
+      sprite: Mobs/Animals/spacecobra.rsi
+  - type: ConditionalSpawner
+    prototypes:
+    - MobCobraSpace
 
 - type: entity
   name: Slimes Spawner Blue
@@ -750,6 +779,21 @@
     prototypes:
     - MobPenguin
 
+
+- type: entity
+  name: Hellspawn Spawner
+  id: SpawnMobHellspawn
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - state: hellspawn
+      sprite: Markers/mobs.rsi
+  - type: ConditionalSpawner
+    prototypes:
+      - MobHellspawn
+
 - type: entity
   name: ore crab spawner
   id: SpawnMobOreCrab
@@ -758,13 +802,14 @@
   - type: Sprite
     layers:
     - state: green
-    - state: quartzcrab
+    - state: quartz_crab
       sprite: Mobs/Elemental/orecrab.rsi
   - type: RandomSpawner
     prototypes:
-      - MobUraniumCrab
-      - MobIronCrab
-      - MobQuartzCrab
+      - MobSpawnCrabUranium
+      - MobSpawnCrabIron
+      - MobSpawnCrabQuartz
+      - MobSpawnCrabSilver
 
 - type: entity
   name: luminous person spawner
@@ -807,3 +852,74 @@
   - type: ConditionalSpawner
     prototypes:
     - MobLuminousEntity
+
+- type: entity
+  name: clown spider spawner
+  id: SpawnClownSpider
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - state: clown
+      sprite: Mobs/Animals/clownspider.rsi
+  - type: ConditionalSpawner
+    prototypes:
+    - MobClownSpider
+
+- type: entity
+  name: honk bot spawner
+  id: SpawnHonkBot
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - state: honkbot
+      sprite: Mobs/Silicon/Bots/honkbot.rsi
+  - type: ConditionalSpawner
+    prototypes:
+    - MobHonkBot
+
+- type: entity
+  name: gingerbread man Spawner
+  id: SpawnMobGingerbreadAI
+  suffix: Ghostrole
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+      - state: green
+      - state: full
+        sprite: Mobs/Species/Gingerbread/parts.rsi
+  - type: ConditionalSpawner
+    prototypes:
+      - MobGingerbreadAI
+
+- type: entity
+  name: Reindeer Buck Spawner
+  id: SpawnMobReindeerBuck
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - state: reindeer_buck_still
+      sprite: Mobs/Animals/reindeer_buck.rsi
+  - type: ConditionalSpawner
+    prototypes:
+    - MobReindeerBuck
+
+- type: entity
+  name: Reindeer Doe Spawner
+  id: SpawnMobReindeerDoe
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+    - state: reindeer_doe_still
+      sprite: Mobs/Animals/reindeer_doe.rsi
+  - type: ConditionalSpawner
+    prototypes:
+    - MobReindeerDoe

@@ -18,11 +18,15 @@
   - type: SpaceGarbage
   - type: UserInterface
     interfaces:
-    - key: enum.CrayonUiKey.Key
-      type: CrayonBoundUserInterface
+      enum.CrayonUiKey.Key:
+        type: CrayonBoundUserInterface
   - type: Crayon
-    capacity: 15
+    capacity: 25
   - type: Food
+  - type: FlavorProfile
+    flavors:
+    - chewy
+    - bitter
   - type: SolutionContainerManager
     solutions:
       food:
@@ -235,7 +239,8 @@
     sprite: Objects/Fun/crayons.rsi
     state: box
   - type: Storage
-    maxSlots: 7
+    grid:
+    - 0,0,7,0
     maxItemSize: Tiny
   - type: Item
     sprite: Objects/Fun/crayons.rsi
@@ -250,6 +255,7 @@
     - id: CrayonBlue
     - id: CrayonPurple
     - id: CrayonBlack
+    - id: CrayonWhite
   - type: ItemMapper
     mapLayers:
       black_box:
@@ -280,4 +286,8 @@
         whitelist:
           tags:
           - CrayonYellow
+      white_box:
+        whitelist:
+          tags:
+          - CrayonWhite
   - type: Appearance

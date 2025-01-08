@@ -8,25 +8,37 @@
     - type: Sprite
       sprite: Objects/Misc/module.rsi
       state: cpuboard
-    - type: Tag
-      tags:
-        - DroneUsable
+    - type: Item
+      storedRotation: -90
     - type: StaticPrice
       price: 100
     - type: PhysicalComposition
       materialComposition:
-        Glass: 400
+        Glass: 230
       chemicalComposition:
         Silicon: 20
 
 - type: entity
   parent: BaseComputerCircuitboard
   id: AlertsComputerCircuitboard
-  name: alerts computer board
-  description: A computer printed circuit board for an alerts computer.
+  name: atmospheric alerts computer board
+  description: A computer printed circuit board for an atmospheric alerts computer.
   components:
+    - type: Sprite
+      state: cpu_engineering
     - type: ComputerBoard
       prototype: ComputerAlert
+
+- type: entity
+  parent: BaseComputerCircuitboard
+  id: AtmosMonitoringComputerCircuitboard
+  name: atmospheric network monitor board
+  description: A computer printed circuit board for an atmospheric network monitor.
+  components:
+    - type: Sprite
+      state: cpu_engineering
+    - type: ComputerBoard
+      prototype: ComputerAtmosMonitoring
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -84,9 +96,17 @@
       prototype: ComputerCargoOrders
     - type: StaticPrice
       price: 750
-    - type: Tag
-      tags:
-      - DroneUsable
+
+- type: entity
+  parent: BaseComputerCircuitboard
+  id: CargoSaleComputerCircuitboard
+  name: cargo sale computer board
+  description: A computer printed circuit board for a cargo sale computer.
+  components:
+    - type: Sprite
+      state: cpu_supply
+    - type: ComputerBoard
+      prototype: ComputerPalletConsole
 
 - type: entity
   id: CargoBountyComputerCircuitboard
@@ -99,9 +119,6 @@
   - type: ComputerBoard
     prototype: ComputerCargoBounty
   - type: StaticPrice
-  - type: Tag
-    tags:
-    - DroneUsable
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -124,6 +141,8 @@
       state: cpu_supply
     - type: ComputerBoard
       prototype: ComputerSalvageExpedition
+    - type: StealTarget
+      stealGroup: SalvageExpeditionsComputerCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -131,17 +150,12 @@
   name: cargo shuttle console board
   description: A computer printed circuit board for a cargo shuttle console.
   components:
-    - type: ComputerBoard
-      prototype: ComputerShuttleCargo
-
-- type: entity
-  parent: BaseComputerCircuitboard
-  id: SalvageShuttleConsoleCircuitboard
-  name: salvage shuttle console board
-  description: A computer printed circuit board for a salvage shuttle console.
-  components:
-    - type: ComputerBoard
-      prototype: ComputerShuttleSalvage
+  - type: Sprite
+    state: cpu_supply
+  - type: ComputerBoard
+    prototype: ComputerShuttleCargo
+  - type: StealTarget
+    stealGroup: CargoShuttleConsoleCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -149,12 +163,13 @@
   name: surveillance camera monitor board
   description: A computer printed circuit board for a surveillance camera monitor.
   components:
-    - type: ComputerBoard
-      prototype: ComputerSurveillanceCameraMonitor
-    - type: Tag
-      tags:
-        - DroneUsable
-        - SurveillanceCameraMonitorCircuitboard
+  - type: Sprite
+    state: cpu_security
+  - type: ComputerBoard
+    prototype: ComputerSurveillanceCameraMonitor
+  - type: Tag
+    tags:
+    - SurveillanceCameraMonitorCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -162,8 +177,10 @@
   name: surveillance wireless camera monitor board
   description: A computer printed circuit board for a surveillance wireless camera monitor.
   components:
-    - type: ComputerBoard
-      prototype: ComputerSurveillanceWirelessCameraMonitor
+  - type: Sprite
+    state: cpu_security
+  - type: ComputerBoard
+    prototype: ComputerSurveillanceWirelessCameraMonitor
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -175,7 +192,6 @@
       prototype: ComputerTelevision
     - type: Tag
       tags:
-        - DroneUsable
         - ComputerTelevisionCircuitboard
 
 - type: entity
@@ -217,11 +233,13 @@
   name: crew monitoring computer board
   description: A computer printed circuit board for a crew monitoring console.
   components:
-    - type: ComputerBoard
-      prototype: ComputerCrewMonitoring
+  - type: Sprite
+    state: cpu_medical
+  - type: ComputerBoard
+    prototype: ComputerCrewMonitoring
 
 - type: entity
-  parent: BaseComputerCircuitboard
+  parent: [BaseComputerCircuitboard, BaseGrandTheftContraband]
   id: IDComputerCircuitboard
   name: ID card computer board
   description: A computer printed circuit board for an ID card console.
@@ -234,7 +252,6 @@
       price: 750
     - type: Tag
       tags:
-      - DroneUsable
       - HighRiskItem
 
 - type: entity
@@ -249,7 +266,7 @@
       prototype: computerBodyScanner
 
 - type: entity
-  parent: BaseComputerCircuitboard
+  parent: [ BaseComputerCircuitboard, BaseGrandTheftContraband ]
   id: CommsComputerCircuitboard
   name: communications computer board
   description: A computer printed circuit board for a communications console.
@@ -260,19 +277,23 @@
       prototype: ComputerComms
 
 - type: entity
-  parent: BaseComputerCircuitboard
+  parent: [ BaseComputerCircuitboard, BaseSyndicateContraband ]
   id: SyndicateCommsComputerCircuitboard
   name: syndicate communications computer board
   description: A computer printed circuit board for a syndicate communications console.
   components:
-    - type: ComputerBoard
-      prototype: SyndicateComputerComms
+  - type: Sprite
+    state: cpu_syndicate
+  - type: ComputerBoard
+    prototype: SyndicateComputerComms
 
 - type: entity
   parent: BaseComputerCircuitboard
   id: RadarConsoleCircuitboard
   name: radar console computer board
   components:
+  - type: Sprite
+    state: cpu_supply
   - type: ComputerBoard
     prototype: ComputerRadar
 
@@ -322,8 +343,10 @@
   name: shuttle console board
   description: A computer printed circuit board for a shuttle console.
   components:
-    - type: ComputerBoard
-      prototype: ComputerShuttle
+  - type: Sprite
+    state: cpu_supply
+  - type: ComputerBoard
+    prototype: ComputerShuttle
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -331,8 +354,10 @@
   name: syndicate shuttle console board
   description: A computer printed circuit board for a syndicate shuttle console.
   components:
-    - type: ComputerBoard
-      prototype: ComputerShuttleSyndie
+  - type: Sprite
+    state: cpu_syndicate
+  - type: ComputerBoard
+    prototype: ComputerShuttleSyndie
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -362,13 +387,15 @@
   name: syndicate IFF console board
   description: Allows you to control the IFF and stealth characteristics of this vessel.
   components:
-    - type: ComputerBoard
-      prototype: ComputerIFFSyndicate
+  - type: Sprite
+    state: cpu_syndicate
+  - type: ComputerBoard
+    prototype: ComputerIFFSyndicate
 
 - type: entity
   parent: BaseComputerCircuitboard
   id: ComputerMassMediaCircuitboard
-  name: mass-media console board
+  name: news manager console board
   description: Write your message to the world!
   components:
     - type: Sprite
@@ -388,3 +415,25 @@
       state: cpu_engineering
     - type: ComputerBoard
       prototype: ComputerSensorMonitoring
+
+- type: entity
+  parent: BaseComputerCircuitboard
+  id: RoboticsConsoleCircuitboard
+  name: robotics control console board
+  description: A computer printed circuit board for a robotics control console.
+  components:
+    - type: Sprite
+      state: cpu_science
+    - type: ComputerBoard
+      prototype: ComputerRoboticsControl
+
+- type: entity
+  parent: BaseComputerCircuitboard
+  id: StationAiUploadCircuitboard
+  name: AI upload console board
+  description: A computer printed circuit board for a AI upload console.
+  components:
+    - type: Sprite
+      state: cpu_science
+    - type: ComputerBoard
+      prototype: StationAiUploadComputer

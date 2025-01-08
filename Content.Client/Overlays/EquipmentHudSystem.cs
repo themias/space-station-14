@@ -14,6 +14,7 @@ public abstract class EquipmentHudSystem<T> : EntitySystem where T : IComponent
 {
     [Dependency] private readonly IPlayerManager _player = default!;
 
+    [ViewVariables]
     protected bool IsActive;
     protected virtual SlotFlags TargetSlots => ~SlotFlags.POCKET;
 
@@ -72,7 +73,7 @@ public abstract class EquipmentHudSystem<T> : EntitySystem where T : IComponent
 
     private void OnPlayerDetached(LocalPlayerDetachedEvent args)
     {
-        if (_player.LocalPlayer?.ControlledEntity == null)
+        if (_player.LocalSession?.AttachedEntity == null)
             Deactivate();
     }
 
@@ -93,17 +94,18 @@ public abstract class EquipmentHudSystem<T> : EntitySystem where T : IComponent
 
     protected virtual void OnRefreshEquipmentHud(EntityUid uid, T component, InventoryRelayedEvent<RefreshEquipmentHudEvent<T>> args)
     {
-        args.Args.Active = true;
+        OnRefreshComponentHud(uid, component, args.Args);
     }
 
     protected virtual void OnRefreshComponentHud(EntityUid uid, T component, RefreshEquipmentHudEvent<T> args)
     {
         args.Active = true;
+        args.Components.Add(component);
     }
 
-    private void RefreshOverlay(EntityUid uid)
+    protected void RefreshOverlay(EntityUid uid)
     {
-        if (uid != _player.LocalPlayer?.ControlledEntity)
+        if (uid != _player.LocalSession?.AttachedEntity)
             return;
 
         var ev = new RefreshEquipmentHudEvent<T>(TargetSlots);
