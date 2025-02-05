@@ -1,6 +1,7 @@
 using Content.Server.Electrocution;
 using Content.Server.Emp;
 using Content.Server.Lightning;
+using Content.Server.Tesla.Components;
 using Content.Shared.Anomaly.Components;
 using Content.Shared.Anomaly.Effects.Components;
 using Content.Shared.StatusEffect;
@@ -60,6 +61,12 @@ public sealed class ElectricityAnomalySystem : EntitySystem
             var range = elec.MaxElectrocuteRange * anom.Stability;
             var damage = (int) (elec.MaxElectrocuteDamage * anom.Severity);
             var duration = elec.MaxElectrocuteDuration * anom.Severity;
+
+            foreach (var (ent, comp) in _lookup.GetEntitiesInRange<LightningSparkingComponent>(_transform.GetMapCoordinates(uid, xform), range))
+            {
+                Transform(ent).Coordinates.TryDistance(EntityManager, Transform(uid).Coordinates, out var groundingDistance);
+                range = Math.Min(range, groundingDistance);
+            }
 
             foreach (var (ent, comp) in _lookup.GetEntitiesInRange<StatusEffectsComponent>(_transform.GetMapCoordinates(uid, xform), range))
             {
