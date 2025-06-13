@@ -37,11 +37,10 @@ public sealed class WhistleSystem : EntitySystem
 
     public void OnActivate(EntityUid uid, WhistleComponent component, ActivateInWorldEvent args)
     {
-        if (!_timing.IsFirstTimePredicted)
+        if (args.Handled || !_timing.IsFirstTimePredicted)
             return;
 
-        TryMakeLoudWhistle(uid, args.User, component);
-        args.Handled = true;
+        args.Handled = TryMakeLoudWhistle(uid, args.User, component);
     }
 
     public bool TryMakeLoudWhistle(EntityUid uid, EntityUid owner, WhistleComponent? component = null)
