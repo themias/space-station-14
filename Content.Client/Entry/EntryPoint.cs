@@ -4,6 +4,7 @@ using Content.Client.Chat.Managers;
 using Content.Client.DebugMon;
 using Content.Client.Eui;
 using Content.Client.Fullscreen;
+using Content.Client.GameTicking.Managers;
 using Content.Client.GhostKick;
 using Content.Client.Guidebook;
 using Content.Client.Input;
@@ -18,6 +19,7 @@ using Content.Client.Replay;
 using Content.Client.Screenshot;
 using Content.Client.Singularity;
 using Content.Client.Stylesheets;
+using Content.Client.UserInterface;
 using Content.Client.Viewport;
 using Content.Client.Voting;
 using Content.Shared.Ame.Components;
@@ -69,8 +71,9 @@ namespace Content.Client.Entry
         [Dependency] private readonly IResourceManager _resourceManager = default!;
         [Dependency] private readonly IReplayLoadManager _replayLoad = default!;
         [Dependency] private readonly ILogManager _logManager = default!;
-        [Dependency] private readonly ContentReplayPlaybackManager _replayMan = default!;
         [Dependency] private readonly DebugMonitorManager _debugMonitorManager = default!;
+        [Dependency] private readonly TitleWindowManager _titleWindowManager = default!;
+        [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
 
         public override void Init()
         {
@@ -108,6 +111,7 @@ namespace Content.Client.Entry
             _prototypeManager.RegisterIgnore("lobbyBackground");
             _prototypeManager.RegisterIgnore("gamePreset");
             _prototypeManager.RegisterIgnore("noiseChannel");
+            _prototypeManager.RegisterIgnore("playerConnectionWhitelist");
             _prototypeManager.RegisterIgnore("spaceBiome");
             _prototypeManager.RegisterIgnore("worldgenConfig");
             _prototypeManager.RegisterIgnore("gameRule");
@@ -119,6 +123,8 @@ namespace Content.Client.Entry
             _prototypeManager.RegisterIgnore("alertLevels");
             _prototypeManager.RegisterIgnore("nukeopsRole");
             _prototypeManager.RegisterIgnore("ghostRoleRaffleDecider");
+            _prototypeManager.RegisterIgnore("codewordGenerator");
+            _prototypeManager.RegisterIgnore("codewordFaction");
 
             _componentFactory.GenerateNetIds();
             _adminManager.Initialize();
@@ -137,6 +143,12 @@ namespace Content.Client.Entry
             _configManager.SetCVar("interface.resolutionAutoScaleLowerCutoffX", 520);
             _configManager.SetCVar("interface.resolutionAutoScaleLowerCutoffY", 240);
             _configManager.SetCVar("interface.resolutionAutoScaleMinimum", 0.5f);
+        }
+
+        public override void Shutdown()
+        {
+            base.Shutdown();
+            _titleWindowManager.Shutdown();
         }
 
         public override void PostInit()
@@ -159,6 +171,7 @@ namespace Content.Client.Entry
             _userInterfaceManager.SetDefaultTheme("SS14DefaultTheme");
             _userInterfaceManager.SetActiveTheme(_configManager.GetCVar(CVars.InterfaceTheme));
             _documentParsingManager.Initialize();
+            _titleWindowManager.Initialize();
 
             _baseClient.RunLevelChanged += (_, args) =>
             {
@@ -190,7 +203,7 @@ namespace Content.Client.Entry
                     _resourceManager,
                     ReplayConstants.ReplayZipFolder.ToRootedPath());
 
-                _replayMan.LastLoad = (null, ReplayConstants.ReplayZipFolder.ToRootedPath());
+                _playbackMan.LastLoad = (null, ReplayConstants.ReplayZipFolder.ToRootedPath());
                 _replayLoad.LoadAndStartReplay(reader);
             }
             else if (_gameController.LaunchState.FromLauncher)
@@ -214,6 +227,15 @@ namespace Content.Client.Entry
             if (level == ModUpdateLevel.FramePreEngine)
             {
                 _debugMonitorManager.FrameUpdate();
+            }
+
+            if (level == ModUpdateLevel.PreEngine)
+            {
+                if (_baseClient.RunLevel is ClientRunLevel.InGame or ClientRunLevel.SinglePlayerGame)
+                {
+                    var updateSystem = _entitySystemManager.GetEntitySystem<BuiPreTickUpdateSystem>();
+                    updateSystem.RunUpdates();
+                }
             }
         }
     }

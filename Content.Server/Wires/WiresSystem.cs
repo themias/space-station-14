@@ -9,6 +9,8 @@ using Content.Shared.GameTicking;
 using Content.Shared.Hands.Components;
 using Content.Shared.Interaction;
 using Content.Shared.Popups;
+using Content.Shared.Power;
+using Content.Shared.Tools;
 using Content.Shared.Tools.Components;
 using Content.Shared.Wires;
 using Robust.Server.GameObjects;
@@ -27,6 +29,9 @@ public sealed class WiresSystem : SharedWiresSystem
     [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly ConstructionSystem _construction = default!;
+
+    private static readonly ProtoId<ToolQualityPrototype> CuttingQuality = "Cutting";
+    private static readonly ProtoId<ToolQualityPrototype> PulsingQuality = "Pulsing";
 
     // This is where all the wire layouts are stored.
     [ViewVariables] private readonly Dictionary<string, WireLayout> _layouts = new();
@@ -151,19 +156,17 @@ public sealed class WiresSystem : SharedWiresSystem
             for (var i = 0; i < enumeratedList.Count; i++)
             {
                 (int id, Wire d) = enumeratedList[i];
+                d.Id = i;
 
                 if (d.Action != null)
                 {
                     var actionType = d.Action.GetType();
-                    if (types.ContainsKey(actionType))
+                    if (!types.TryAdd(actionType, 1))
                         types[actionType] += 1;
-                    else
-                        types.Add(actionType, 1);
 
                     if (!d.Action.AddWire(d, types[actionType]))
                         d.Action = null;
                 }
-                d.Id = i;
 
                 data.Add(id, new WireLayout.WireData(d.Letter, d.Color, i));
                 wires.WiresList[i] = wireSet[id];
@@ -388,11 +391,7 @@ public sealed class WiresSystem : SharedWiresSystem
 
     private void OnWiresActionMessage(EntityUid uid, WiresComponent component, WiresActionMessage args)
     {
-        if (args.Actor == null)
-        {
-            return;
-        }
-        var player = (EntityUid) args.Actor;
+        var player = args.Actor;
 
         if (!EntityManager.TryGetComponent(player, out HandsComponent? handsComponent))
         {
@@ -448,8 +447,8 @@ public sealed class WiresSystem : SharedWiresSystem
         if (!IsPanelOpen(uid))
             return;
 
-        if (Tool.HasQuality(args.Used, "Cutting", tool) ||
-            Tool.HasQuality(args.Used, "Pulsing", tool))
+        if (Tool.HasQuality(args.Used, CuttingQuality, tool) ||
+            Tool.HasQuality(args.Used, PulsingQuality, tool))
         {
             if (TryComp(args.User, out ActorComponent? actor))
             {
@@ -584,14 +583,14 @@ public sealed class WiresSystem : SharedWiresSystem
     ///     Tries to get all the wires on this entity by the wire action type.
     /// </summary>
     /// <returns>Enumerator of all wires in this entity according to the given type.</returns>
-    public IEnumerable<Wire> TryGetWires<T>(EntityUid uid, WiresComponent? wires = null)
+    public IEnumerable<Wire> TryGetWires<T>(EntityUid uid, WiresComponent? wires = null) where T: IWireAction
     {
         if (!Resolve(uid, ref wires))
             yield break;
 
         foreach (var wire in wires.WiresList)
         {
-            if (wire.GetType() == typeof(T))
+            if (wire.Action?.GetType() == typeof(T))
             {
                 yield return wire;
             }
@@ -628,7 +627,7 @@ public sealed class WiresSystem : SharedWiresSystem
         switch (action)
         {
             case WiresAction.Cut:
-                if (!Tool.HasQuality(toolEntity, "Cutting", tool))
+                if (!Tool.HasQuality(toolEntity, CuttingQuality, tool))
                 {
                     _popupSystem.PopupCursor(Loc.GetString("wires-component-ui-on-receive-message-need-wirecutters"), user);
                     return;
@@ -642,7 +641,7 @@ public sealed class WiresSystem : SharedWiresSystem
 
                 break;
             case WiresAction.Mend:
-                if (!Tool.HasQuality(toolEntity, "Cutting", tool))
+                if (!Tool.HasQuality(toolEntity, CuttingQuality, tool))
                 {
                     _popupSystem.PopupCursor(Loc.GetString("wires-component-ui-on-receive-message-need-wirecutters"), user);
                     return;
@@ -656,7 +655,7 @@ public sealed class WiresSystem : SharedWiresSystem
 
                 break;
             case WiresAction.Pulse:
-                if (!Tool.HasQuality(toolEntity, "Pulsing", tool))
+                if (!Tool.HasQuality(toolEntity, PulsingQuality, tool))
                 {
                     _popupSystem.PopupCursor(Loc.GetString("wires-component-ui-on-receive-message-need-multitool"), user);
                     return;
@@ -715,7 +714,7 @@ public sealed class WiresSystem : SharedWiresSystem
         switch (action)
         {
             case WiresAction.Cut:
-                if (!Tool.HasQuality(toolEntity, "Cutting", tool))
+                if (!Tool.HasQuality(toolEntity, CuttingQuality, tool))
                 {
                     _popupSystem.PopupCursor(Loc.GetString("wires-component-ui-on-receive-message-need-wirecutters"), user);
                     break;
@@ -727,7 +726,7 @@ public sealed class WiresSystem : SharedWiresSystem
                     break;
                 }
 
-                Tool.PlayToolSound(toolEntity, tool, user);
+                Tool.PlayToolSound(toolEntity, tool, null);
                 if (wire.Action == null || wire.Action.Cut(user, wire))
                 {
                     wire.IsCut = true;
@@ -736,7 +735,7 @@ public sealed class WiresSystem : SharedWiresSystem
                 UpdateUserInterface(used);
                 break;
             case WiresAction.Mend:
-                if (!Tool.HasQuality(toolEntity, "Cutting", tool))
+                if (!Tool.HasQuality(toolEntity, CuttingQuality, tool))
                 {
                     _popupSystem.PopupCursor(Loc.GetString("wires-component-ui-on-receive-message-need-wirecutters"), user);
                     break;
@@ -748,7 +747,7 @@ public sealed class WiresSystem : SharedWiresSystem
                     break;
                 }
 
-                Tool.PlayToolSound(toolEntity, tool, user);
+                Tool.PlayToolSound(toolEntity, tool, null);
                 if (wire.Action == null || wire.Action.Mend(user, wire))
                 {
                     wire.IsCut = false;
@@ -757,7 +756,7 @@ public sealed class WiresSystem : SharedWiresSystem
                 UpdateUserInterface(used);
                 break;
             case WiresAction.Pulse:
-                if (!Tool.HasQuality(toolEntity, "Pulsing", tool))
+                if (!Tool.HasQuality(toolEntity, PulsingQuality, tool))
                 {
                     _popupSystem.PopupCursor(Loc.GetString("wires-component-ui-on-receive-message-need-multitool"), user);
                     break;

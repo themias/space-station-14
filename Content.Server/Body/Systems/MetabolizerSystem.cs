@@ -1,9 +1,10 @@
 using Content.Server.Body.Components;
-using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Shared.Administration.Logs;
+using Content.Shared.Body.Events;
 using Content.Shared.Body.Organ;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.Components.SolutionManager;
+using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Database;
 using Content.Shared.EntityEffects;
@@ -24,7 +25,7 @@ namespace Content.Server.Body.Systems
         [Dependency] private readonly IRobustRandom _random = default!;
         [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
         [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
-        [Dependency] private readonly SolutionContainerSystem _solutionContainerSystem = default!;
+        [Dependency] private readonly SharedSolutionContainerSystem _solutionContainerSystem = default!;
 
         private EntityQuery<OrganComponent> _organQuery;
         private EntityQuery<SolutionContainerManagerComponent> _solutionQuery;
@@ -56,11 +57,11 @@ namespace Content.Server.Body.Systems
         {
             if (!entity.Comp.SolutionOnBody)
             {
-                _solutionContainerSystem.EnsureSolution(entity.Owner, entity.Comp.SolutionName);
+                _solutionContainerSystem.EnsureSolution(entity.Owner, entity.Comp.SolutionName, out _);
             }
             else if (_organQuery.CompOrNull(entity)?.Body is { } body)
             {
-                _solutionContainerSystem.EnsureSolution(body, entity.Comp.SolutionName);
+                _solutionContainerSystem.EnsureSolution(body, entity.Comp.SolutionName, out _);
             }
         }
 
@@ -230,30 +231,5 @@ namespace Content.Server.Body.Systems
 
             _solutionContainerSystem.UpdateChemicals(soln.Value);
         }
-    }
-
-    // TODO REFACTOR THIS
-    // This will cause rates to slowly drift over time due to floating point errors.
-    // Instead, the system that raised this should trigger an update and subscribe to get-modifier events.
-    [ByRefEvent]
-    public readonly record struct ApplyMetabolicMultiplierEvent(
-        EntityUid Uid,
-        float Multiplier,
-        bool Apply)
-    {
-        /// <summary>
-        /// The entity whose metabolism is being modified.
-        /// </summary>
-        public readonly EntityUid Uid = Uid;
-
-        /// <summary>
-        /// What the metabolism's update rate will be multiplied by.
-        /// </summary>
-        public readonly float Multiplier = Multiplier;
-
-        /// <summary>
-        /// If true, apply the multiplier. If false, revert it.
-        /// </summary>
-        public readonly bool Apply = Apply;
     }
 }
